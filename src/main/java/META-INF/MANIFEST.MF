@@ -1,3 +1,7 @@
 Manifest-Version: 1.0
 Main-Class: GCal
-
+Built-By: ahiel
+Class-Path: org.eclipse.paho.client.mqttv3-1.0.2.jar gson-2.6.2.jar mail-1.4.7.jar activation-1.1.jar
+Created-By: Apache Maven 3.0.5
+Build-Jdk: 1.8.0_71
+Main-Class: GCal

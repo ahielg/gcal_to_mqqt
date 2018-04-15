@@ -18,7 +18,7 @@ public class MailSender {
     public static void sendMail(String encPass, String to, String subject, String body) throws Exception {
         String host = "smtp.gmail.com";
         String from = KeysCons.FROM_MAIL;
-        String pass = LocalEncryptor.decrypt(encPass);
+        String pass = new CryptoUtil().decrypt(encPass);
 
         Properties props = System.getProperties();
         props.put("mail.smtp.starttls.enable", "true"); // added this line

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ahiel.poc</groupId>
-    <artifactId>gcal-publisher</artifactId>
+    <artifactId>gcal</artifactId>
     <version>1.0.0.0-SNAPSHOT</version>
 
     <properties>
@@ -29,6 +29,33 @@
                     <debuglevel>vars,source,lines</debuglevel>
                     <compilerArgument>-Xlint:serial</compilerArgument>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>create-jar-with-dependencies</id>
+                        <phase>package</phase>
+
+
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <mainClass>GCal</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -93,12 +120,12 @@
             <artifactId>mail</artifactId>
             <version>${mail.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>org.fusesource.mqtt-client</groupId>
-            <artifactId>mqtt-client</artifactId>
-            <version>${mqtt-client.version}</version>
-        </dependency>-->
+        <!--
+                <dependency>
+                    <groupId>org.fusesource.mqtt-client</groupId>
+                    <artifactId>mqtt-client</artifactId>
+                    <version>${mqtt-client.version}</version>
+                </dependency>-->
     </dependencies>
 
 </project>
