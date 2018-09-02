@@ -175,10 +175,12 @@ public class GCal {
         }
         String havdala = candleLighting.getHavdala();
 
-        return new HebData(RegularHebrewDate.getParasha(parshaNum),
+        HebData hebData = new HebData(RegularHebrewDate.getParasha(parshaNum),
                 RegularHebrewDate.getParashaEng(parshaNum),
                 knisa, havdala, date.getHoliday(), date.getOmerAsString(),
                 CalendarUtils.getToday(), currDate.getHebrewDateAsString());
+        System.out.println("hebData = " + hebData);
+        return hebData;
     }
 
 
