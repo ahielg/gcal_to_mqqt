@@ -419,6 +419,10 @@ public class RegularHebrewDate extends HebrewDate {
         return parshios[parashaNum];
     }
 
+    public static String getParashaEng(int parashaNum) {
+        return parshiosEng[parashaNum][0];
+    }
+
     public static int getNumFromParasha(String parasha) {
         for (int i = 0; i < parshios.length; i++) {
             if (parshios[i].equals(parasha)) {
@@ -589,13 +593,17 @@ public class RegularHebrewDate extends HebrewDate {
     }
 
     public static int getNextParashaNumOnShabat(Calendar calendar) {
+        RegularHebrewDate h1 = getNextShabatDate(calendar);
+        return h1.getParshaNum();
+    }
+
+    public static RegularHebrewDate getNextShabatDate(Calendar calendar) {
         Calendar c = (Calendar) calendar.clone();
 
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
             c.add(Calendar.DAY_OF_MONTH, 1);
         }
-        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
-        return h1.getParshaNum();
+        return new RegularHebrewDate(c.getTime());
     }
 
     public static int getNextParashaNumOnShabat() {
@@ -619,7 +627,7 @@ public class RegularHebrewDate extends HebrewDate {
 
         return sb.toString();
     }
-/*
+
     private static final String[][] parshiosEng =
             {
                     {"Bereshit", "Bereshis"},
@@ -683,7 +691,6 @@ public class RegularHebrewDate extends HebrewDate {
                     {"Matot Masei", "Matos Masei"},
                     {"Nitzavim Vayeilech", "Nitzavim Vayeilech"}
             };
-*/
 
     /**
      * returns a String of the holiday or fast day for the current day, or an empty string

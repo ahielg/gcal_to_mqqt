@@ -1,6 +1,10 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import heb.date.CandleLighting;
+import heb.date.HebData;
+import heb.date.HebrewDate;
 import heb.date.RegularHebrewDate;
+import heb.date.cal.CalendarUtils;
 import mqtt.MQTTClient;
 import mqtt.PahoMQTTClient;
 import util.KeysCons;
@@ -27,6 +31,7 @@ public class GCal {
     //private static final String HOLIDAY_CALENDAR = "en.jewish%23holiday%40group.v.calendar.google.com";
     private static final String SCHOOL_TOPIC = "openhab/calSchool";
     private static final String HOLIDAY_TOPIC = "openhab/calHoliday";
+    private static final String HEB_DATE_TOPIC = "openhab/hebDate/";
     private static final String TODAY = "Today";
     private static final String TOMORROW = "Tomorrow";
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -34,11 +39,20 @@ public class GCal {
     private static final String ITEMS = "items";
     private static final String SUMMARY = "summary";
 
+    private static final String PARASHA_ENG = "parashaEng";
+    private static final String PARASHA = "parasha";
+    private static final String KNISA = "knisa";
+    private static final String HAVDALA = "havdala";
+    private static final String DATE = "date";
+    private static final String HOLIDAY = "holiday";
+    private static final String DATE_ENG = "dateEng";
+    private static final String OMER = "omer";
+
     public static void main(String[] args) throws Exception {
         //int daysIncrease = 0;
         //String holiday = getCalEvent(HOLIDAY_CALENDAR, tomorrowStart, tomorrowEnd);
         //holiday = validateHoliday(holiday);
-        publishData(schoolCalc(0), schoolCalc(1), isHoliday(0), isHoliday(1));
+        publishData(schoolCalc(0), schoolCalc(1), isHoliday(0), isHoliday(1), calcHebData());
 
     }
 
@@ -85,7 +99,7 @@ public class GCal {
         }
     }
 
-    private static void publishData(String schoolToday, String schoolTomorrow, String holidayToday, String holidayTomorrow) throws IOException {
+    private static void publishData(String schoolToday, String schoolTomorrow, String holidayToday, String holidayTomorrow, HebData hebData) throws IOException {
         //final SimpleMQTTClient sc = new SimpleMQTTClient("localhost");
         try (MQTTClient sc = new PahoMQTTClient()){
             sc.publish(SCHOOL_TOPIC, schoolTomorrow);
@@ -95,6 +109,15 @@ public class GCal {
             sc.publish(SCHOOL_TOPIC + TOMORROW, parseHoliday(schoolTomorrow));
             sc.publish(HOLIDAY_TOPIC + TODAY, parseHoliday(holidayToday));
             sc.publish(HOLIDAY_TOPIC + TOMORROW, parseHoliday(holidayTomorrow));
+
+            sc.publish(HEB_DATE_TOPIC + PARASHA_ENG, hebData.getParasha());
+            sc.publish(HEB_DATE_TOPIC + PARASHA, hebData.getParashaHeb());
+            sc.publish(HEB_DATE_TOPIC + KNISA, hebData.getKnisatShabat());
+            sc.publish(HEB_DATE_TOPIC + HAVDALA, hebData.getHavdala());
+            sc.publish(HEB_DATE_TOPIC + DATE, hebData.getHebDate());
+            sc.publish(HEB_DATE_TOPIC + DATE_ENG, hebData.getHebDateEng());
+            sc.publish(HEB_DATE_TOPIC + HOLIDAY, hebData.getHoliday());
+            sc.publish(HEB_DATE_TOPIC + OMER, hebData.getOmer());
         }
     }
 
@@ -114,16 +137,50 @@ public class GCal {
     }
 
     private static String isHoliday(int daysIncrease) {
+        RegularHebrewDate regularHebrewDate = getHebDate(daysIncrease);
+        System.out.println(regularHebrewDate.isShabatonHoliday() + ":::" + regularHebrewDate.getHoliday());
+        return regularHebrewDate.isShabatonHoliday() ? regularHebrewDate.getHoliday() : "NA";
+    }
+
+    private static RegularHebrewDate getHebDate(int daysIncrease) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, daysIncrease);
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
 
-        RegularHebrewDate regularHebrewDate = new RegularHebrewDate(cal);
-        System.out.println(regularHebrewDate.isShabatonHoliday() + ":::" + regularHebrewDate.getHoliday());
-        return regularHebrewDate.isShabatonHoliday() ? regularHebrewDate.getHoliday() : "NA";
+        return new RegularHebrewDate(cal);
     }
+
+    private static HebData calcHebData() {
+        Calendar cal = Calendar.getInstance();
+        RegularHebrewDate currDate = new RegularHebrewDate(cal);
+
+        RegularHebrewDate date = RegularHebrewDate.getNextShabatDate(cal);
+        int parshaNum = date.getParshaNum();
+
+        RegularHebrewDate.getParashaEng(parshaNum);
+
+        Calendar c = cal;
+        CandleLighting candleLighting = new CandleLighting(new HebrewDate(c));
+        while ("".equals(candleLighting.getCandleLighting())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            candleLighting = new CandleLighting(new HebrewDate(c));
+        }
+        String knisa = candleLighting.getCandleLighting();
+
+        while ("".equals(candleLighting.getHavdala())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            candleLighting = new CandleLighting(new HebrewDate(c));
+        }
+        String havdala = candleLighting.getHavdala();
+
+        return new HebData(RegularHebrewDate.getParasha(parshaNum),
+                RegularHebrewDate.getParashaEng(parshaNum),
+                knisa, havdala, date.getHoliday(), date.getOmerAsString(),
+                CalendarUtils.getToday(), currDate.getHebrewDateAsString());
+    }
+
 
     private static Date theEndDate(int daysIncrease) {
         Calendar cal = Calendar.getInstance();
