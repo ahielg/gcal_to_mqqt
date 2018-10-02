@@ -23,18 +23,6 @@ import java.util.Date;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class RegularHebrewDate extends HebrewDate {
-    private boolean israeli = true;
-    private static String[] DAYS = {"ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"};
-    // parsha names in both ashkenazi and sephardi pronunciation
-    // Somewhat redundant (don't you think?)
-    private static final String[] parshios =
-            {"בראשית", "נח", "לך לך", "וירא", "חיי שרה", "תולדות", "ויצא", "וישלח", "וישב", "מקץ", "ויגש", "ויחי",
-                    "שמות", "וארא", "בא", "בשלח", "יתרו", "משפטים", "תרומה", "תצוה", "כי תשא", "ויקהל", "פקודי",
-                    "ויקרא", "צו", "שמיני", "תזריע", "מצורע", "אחרי מות", "קדושים", "אמור", "בהר", "בחוקותי"
-                    , "במדבר", "נשא", "בהעלותך", "שלח", "קרח", "חוקת", "בלק", "פנחס", "מטות", "מסעי",
-                    "דברים", "ואתחנן", "עקב", "ראה", "שופטים", "כי תצא", "כי תבוא", "נצבים", "וילך", "האזינו",
-                    "ויקהל-פקודי", "תזריע-מצורע", "אחרי מות-קדושים", "בהר-בחוקותי", "חוקת-בלק", "מטות-מסעי", "נצבים-וילך"};
-
     public static final String[] importantHolidays = {"פסח",
             "שבועות",
             "יז בתמוז",
@@ -49,42 +37,40 @@ public class RegularHebrewDate extends HebrewDate {
             "טו בשבט",
             "פורים"
     };
-
-
-    // These indices were originaly included in the emacs 19 distribution.
-    // These arrays determine the correct indices into the parsha names
-    // -1 means no parsha that week, values > 52 means it is a double parsha
-
-
-    public static String[] getParshios() {
-        return parshios;
-    }
-
+    // parsha names in both ashkenazi and sephardi pronunciation
+    // Somewhat redundant (don't you think?)
+    private static final String[] parshios =
+            {"בראשית", "נח", "לך לך", "וירא", "חיי שרה", "תולדות", "ויצא", "וישלח", "וישב", "מקץ", "ויגש", "ויחי",
+                    "שמות", "וארא", "בא", "בשלח", "יתרו", "משפטים", "תרומה", "תצוה", "כי תשא", "ויקהל", "פקודי",
+                    "ויקרא", "צו", "שמיני", "תזריע", "מצורע", "אחרי מות", "קדושים", "אמור", "בהר", "בחוקותי"
+                    , "במדבר", "נשא", "בהעלותך", "שלח", "קרח", "חוקת", "בלק", "פנחס", "מטות", "מסעי",
+                    "דברים", "ואתחנן", "עקב", "ראה", "שופטים", "כי תצא", "כי תבוא", "נצבים", "וילך", "האזינו",
+                    "ויקהל-פקודי", "תזריע-מצורע", "אחרי מות-קדושים", "בהר-בחוקותי", "חוקת-בלק", "מטות-מסעי", "נצבים-וילך"};
     private static final int[] Sat_short =
             {-1, 52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25,
                     54, 55, 30, 56, 33, 34, 35, 36, 37, 38, 39, 40, 58, 43, 44,
                     45, 46, 47, 48, 49, 50};
-
     private static final int[] Sat_long =
             {-1, 52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25,
                     54, 55, 30, 56, 33, 34, 35, 36, 37, 38, 39, 40, 58, 43, 44,
                     45, 46, 47, 48, 49, 59};
 
+
+    // These indices were originaly included in the emacs 19 distribution.
+    // These arrays determine the correct indices into the parsha names
+    // -1 means no parsha that week, values > 52 means it is a double parsha
     private static final int[] Mon_short =
             {51, 52, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25, 54,
                     55, 30, 56, 33, 34, 35, 36, 37, 38, 39, 40, 58, 43, 44, 45,
                     46, 47, 48, 49, 59};
-
     private static final int[] Mon_long = // split //
             {51, 52, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25, 54,
                     55, 30, 56, 33, -1, 34, 35, 36, 37, 57, 40, 58, 43, 44, 45,
                     46, 47, 48, 49, 59};
-
-
     private static final int[] Thu_normal =
             {52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, -1, 25,
@@ -95,25 +81,21 @@ public class RegularHebrewDate extends HebrewDate {
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25, 54,
                     55, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 58, 43, 44,
                     45, 46, 47, 48, 49, 50};
-
     private static final int[] Thu_long =
             {52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, -1, 25,
                     54, 55, 30, 56, 33, 34, 35, 36, 37, 38, 39, 40, 58, 43, 44,
                     45, 46, 47, 48, 49, 50};
-
     private static final int[] Sat_short_leap =
             {-1, 52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
                     26, 27, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
                     40, 58, 43, 44, 45, 46, 47, 48, 49, 59};
-
     private static final int[] Sat_long_leap =
             {-1, 52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
                     26, 27, -1, 28, 29, 30, 31, 32, 33, -1, 34, 35, 36, 37, 57,
                     40, 58, 43, 44, 45, 46, 47, 48, 49, 59};
-
     private static final int[] Mon_short_leap =
             {51, 52, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -124,7 +106,6 @@ public class RegularHebrewDate extends HebrewDate {
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
                     27, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                     58, 43, 44, 45, 46, 47, 48, 49, 59};
-
     private static final int[] Mon_long_leap =
             {51, 52, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
@@ -135,18 +116,81 @@ public class RegularHebrewDate extends HebrewDate {
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
                     27, -1, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                     41, 42, 43, 44, 45, 46, 47, 48, 49, 50};
-
     private static final int[] Thu_short_leap =
             {52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
                     27, 28, -1, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                     41, 42, 43, 44, 45, 46, 47, 48, 49, 50};
-
     private static final int[] Thu_long_leap =
             {52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                     12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
                     27, 28, -1, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
                     41, 42, 43, 44, 45, 46, 47, 48, 49, 59};
+    private static final String[][] parshiosEng =
+            {
+                    {"Bereshit", "Bereshis"},
+                    {"Noach", "Noach"},
+                    {"Lech-Lecha", "Lech-Lecha"},
+                    {"Vayera", "Vayera"},
+                    {"Chayei Sara", "Chayei Sara"},
+                    {"Toldot", "Toldos"},
+                    {"Vayetzei", "Vayetzei"},
+                    {"Vayishlach", "Vayishlach"},
+                    {"Vayeshev", "Vayeshev"},
+                    {"Miketz", "Miketz"},
+                    {"Vayigash", "Vayigash"},
+                    {"Vayechi", "Vayechi"},
+                    {"Shemot", "Shemos"},
+                    {"Vaera", "Vaera"},
+                    {"Bo", "Bo"},
+                    {"Beshalach", "Beshalach"},
+                    {"Yitro", "Yisro"},
+                    {"Mishpatim", "Mishpatim"},
+                    {"Terumah", "Terumah"},
+                    {"Tetzaveh", "Tetzaveh"},
+                    {"Ki Tisa", "Ki Sisa"},
+                    {"Vayakhel", "Vayakhel"},
+                    {"Pekudei", "Pekudei"},
+                    {"Vayikra", "Vayikra"},
+                    {"Tzav", "Tzav"},
+                    {"Shmini", "Shmini"},
+                    {"Tazria", "Sazria"},
+                    {"Metzora", "Metzora"},
+                    {"Achrei Mot", "Achrei Mos"},
+                    {"Kedoshim", "Kedoshim"},
+                    {"Emor", "Emor"},
+                    {"Behar", "Behar"},
+                    {"Bechukotai", "Bechukosai"},
+                    {"Bamidbar", "Bamidbar"},
+                    {"Nasso", "Nasso"},
+                    {"Beha'alotcha", "Beha'aloscha"},
+                    {"Sh'lach", "Sh'lach"},
+                    {"Korach", "Korach"},
+                    {"Chukat", "Chukas"},
+                    {"Balak", "Balak"},
+                    {"Pinchas", "Pinchas"},
+                    {"Matot", "Matos"},
+                    {"Masei", "Masei"},
+                    {"Devarim", "Devarim"},
+                    {"Vaetchanan", "Vaeschanan"},
+                    {"Eikev", "Eikev"},
+                    {"Re'eh", "Re'eh"},
+                    {"Shoftim", "Shoftim"},
+                    {"Ki Teitzei", "Ki Seitzei"},
+                    {"Ki Tavo", "Ki Savo"},
+                    {"Nitzavim", "Nitzavim"},
+                    {"Vayeilech", "Vayeilech"},
+                    {"Ha'Azinu", "Ha'Azinu"},
+                    {"Vayakhel Pekudei", "Vayakhel Pekudei"},
+                    {"Tazria Metzora", "Sazria Metzora"},
+                    {"Achrei Mot Kedoshim", "Achrei Mos Kedoshim"},
+                    {"Behar Bechukotai", "Behar Bechukosai"},
+                    {"Chukat Balak", "Chukas Balak"},
+                    {"Matot Masei", "Matos Masei"},
+                    {"Nitzavim Vayeilech", "Nitzavim Vayeilech"}
+            };
+    private static String[] DAYS = {"ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"};
+    private boolean israeli = true;
 
     /**
      * Initializes based on a month, date, year and whether it is ashkenaz pronunciation
@@ -187,11 +231,133 @@ public class RegularHebrewDate extends HebrewDate {
         super(cal);
     }
 
-    /**
-     * Sets whether to use Israel parsha and holiday scheme or not. Default is "false".
-     */
-    public void setIsraeli(boolean israeli) {
-        this.israeli = israeli;
+    public static String[] getParshios() {
+        return parshios;
+    }
+
+    public static String getParasha(int parashaNum) {
+        String parasha = "";
+        try {
+            parasha = parshios[parashaNum];
+        } catch (Exception e) {
+            System.out.printf("Error getting parasha for :%d. %s%n", parashaNum, e.getMessage());
+        }
+        return parasha;
+    }
+
+    public static String getParashaEng(int parashaNum) {
+        String parasha = "";
+        try {
+            parasha = parshiosEng[parashaNum][0];
+        } catch (Exception e) {
+            System.out.printf("Error getting eng parasha for :%d. %s%n", parashaNum, e.getMessage());
+        }
+        return parasha;
+    }
+
+    public static int getNumFromParasha(String parasha) {
+        for (int i = 0; i < parshios.length; i++) {
+            if (parshios[i].equals(parasha)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    public static String getParashaAsString(int parashaNum) {
+        String parasha = "פרשת " + RegularHebrewDate.getParasha(parashaNum);
+        if (parashaNum > 52) {
+            String parasha1 = RegularHebrewDate.getParasha(parashaNum);
+            parasha = "פרשות " + RegularHebrewDate.getParasha(parashaNum);
+        }
+        return parasha;
+    }
+
+    public static int getNextHolidayNum(Calendar calendar, int daysToCheck) {
+        Calendar c = (Calendar) calendar.clone();
+        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
+        while (daysToCheck > 0 && h1.getImportantHoliday() == -1) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            h1 = new RegularHebrewDate(c.getTime());
+            daysToCheck--;
+        }
+        return h1.getImportantHoliday();
+    }
+
+    public static String getNextParsha() {
+        Calendar c = Calendar.getInstance();
+        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
+        while ("".equals(h1.getParsha())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            h1 = new RegularHebrewDate(c.getTime());
+        }
+
+        return h1.getParsha();
+    }
+
+    public static String getNextParshaOrHoliday() {
+        Calendar c = Calendar.getInstance();
+        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
+        while ("".equals(h1.getParsha()) && "".equals(h1.getHoliday())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            h1 = new RegularHebrewDate(c.getTime());
+        }
+
+        return h1.getParsha() + h1.getHoliday();
+    }
+
+    public static String getNextParashaOnShabat() {
+        Calendar c = Calendar.getInstance();
+        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
+        return h1.getParsha() + " " + h1.getHoliday();
+    }
+
+    public static String getDayInWord(Calendar c) {
+        return DAYS[c.get(Calendar.DAY_OF_WEEK) - 1];
+    }
+
+    public static int getNextParashaNumOnShabat(Calendar calendar) {
+        RegularHebrewDate h1 = getNextShabatDate(calendar);
+        return h1.getParshaNum();
+    }
+
+    public static RegularHebrewDate getNextShabatDate(Calendar calendar) {
+        Calendar c = (Calendar) calendar.clone();
+
+        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return new RegularHebrewDate(c.getTime());
+    }
+
+    public static int getNextParashaNumOnShabat() {
+        return getNextParashaNumOnShabat(Calendar.getInstance());
+    }
+
+    public static String getCandleAndHavdala() {
+        StringBuilder sb = new StringBuilder("הדלקת נרות:");
+        Calendar c = Calendar.getInstance();
+        CandleLighting cl = new CandleLighting(new HebrewDate(c));
+        while ("".equals(cl.getCandleLighting())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            cl = new CandleLighting(new HebrewDate(c));
+        }
+        sb.append(cl.getCandleLighting()).append(", צאת שבת:");
+        while ("".equals(cl.getHavdala())) {
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            cl = new CandleLighting(new HebrewDate(c));
+        }
+        sb.append(cl.getHavdala()).append(" עדכני ל").append(cl.getDefaultLocale().getName());
+
+        return sb.toString();
+    }
+
+    public static String getImportantHolidayByNum(int nextHolidayNum) {
+        return nextHolidayNum == -1 ? null : RegularHebrewDate.importantHolidays[nextHolidayNum - 1];
     }
 
     /**
@@ -199,6 +365,13 @@ public class RegularHebrewDate extends HebrewDate {
      */
     public boolean isIsraeli() {
         return israeli;
+    }
+
+    /**
+     * Sets whether to use Israel parsha and holiday scheme or not. Default is "false".
+     */
+    public void setIsraeli(boolean israeli) {
+        this.israeli = israeli;
     }
 
     /**
@@ -410,36 +583,9 @@ public class RegularHebrewDate extends HebrewDate {
         if (index == -1) {
             return "";
         } else { // if parsha this week
-/*            int subindex;*/
+            /*            int subindex;*/
             return getParasha(index);
         }
-    }
-
-    public static String getParasha(int parashaNum) {
-        return parshios[parashaNum];
-    }
-
-    public static String getParashaEng(int parashaNum) {
-        return parshiosEng[parashaNum][0];
-    }
-
-    public static int getNumFromParasha(String parasha) {
-        for (int i = 0; i < parshios.length; i++) {
-            if (parshios[i].equals(parasha)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    public static String getParashaAsString(int parashaNum) {
-        String parasha = "פרשת " + RegularHebrewDate.getParasha(parashaNum);
-        if (parashaNum > 52) {
-            String parasha1 = RegularHebrewDate.getParasha(parashaNum);
-            parasha = "פרשות " + RegularHebrewDate.getParasha(parashaNum);
-        }
-        return parasha;
     }
 
     public int getParshaNum() {
@@ -544,154 +690,6 @@ public class RegularHebrewDate extends HebrewDate {
 
     }
 
-    public static int getNextHolidayNum(Calendar calendar, int daysToCheck) {
-        Calendar c = (Calendar) calendar.clone();
-        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
-        while (daysToCheck > 0 && h1.getImportantHoliday() == -1) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            h1 = new RegularHebrewDate(c.getTime());
-            daysToCheck--;
-        }
-        return h1.getImportantHoliday();
-    }
-
-
-    public static String getNextParsha() {
-        Calendar c = Calendar.getInstance();
-        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
-        while ("".equals(h1.getParsha())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            h1 = new RegularHebrewDate(c.getTime());
-        }
-
-        return h1.getParsha();
-    }
-
-    public static String getNextParshaOrHoliday() {
-        Calendar c = Calendar.getInstance();
-        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
-        while ("".equals(h1.getParsha()) && "".equals(h1.getHoliday())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            h1 = new RegularHebrewDate(c.getTime());
-        }
-
-        return h1.getParsha() + h1.getHoliday();
-    }
-
-
-    public static String getNextParashaOnShabat() {
-        Calendar c = Calendar.getInstance();
-        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        RegularHebrewDate h1 = new RegularHebrewDate(c.getTime());
-        return h1.getParsha() + " " + h1.getHoliday();
-    }
-
-    public static String getDayInWord(Calendar c) {
-        return DAYS[c.get(Calendar.DAY_OF_WEEK) - 1];
-    }
-
-    public static int getNextParashaNumOnShabat(Calendar calendar) {
-        RegularHebrewDate h1 = getNextShabatDate(calendar);
-        return h1.getParshaNum();
-    }
-
-    public static RegularHebrewDate getNextShabatDate(Calendar calendar) {
-        Calendar c = (Calendar) calendar.clone();
-
-        while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-        }
-        return new RegularHebrewDate(c.getTime());
-    }
-
-    public static int getNextParashaNumOnShabat() {
-        return getNextParashaNumOnShabat(Calendar.getInstance());
-    }
-
-    public static String getCandleAndHavdala() {
-        StringBuilder sb = new StringBuilder("הדלקת נרות:");
-        Calendar c = Calendar.getInstance();
-        CandleLighting cl = new CandleLighting(new HebrewDate(c));
-        while ("".equals(cl.getCandleLighting())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            cl = new CandleLighting(new HebrewDate(c));
-        }
-        sb.append(cl.getCandleLighting()).append(", צאת שבת:");
-        while ("".equals(cl.getHavdala())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            cl = new CandleLighting(new HebrewDate(c));
-        }
-        sb.append(cl.getHavdala()).append(" עדכני ל").append(cl.getDefaultLocale().getName());
-
-        return sb.toString();
-    }
-
-    private static final String[][] parshiosEng =
-            {
-                    {"Bereshit", "Bereshis"},
-                    {"Noach", "Noach"},
-                    {"Lech-Lecha", "Lech-Lecha"},
-                    {"Vayera", "Vayera"},
-                    {"Chayei Sara", "Chayei Sara"},
-                    {"Toldot", "Toldos"},
-                    {"Vayetzei", "Vayetzei"},
-                    {"Vayishlach", "Vayishlach"},
-                    {"Vayeshev", "Vayeshev"},
-                    {"Miketz", "Miketz"},
-                    {"Vayigash", "Vayigash"},
-                    {"Vayechi", "Vayechi"},
-                    {"Shemot", "Shemos"},
-                    {"Vaera", "Vaera"},
-                    {"Bo", "Bo"},
-                    {"Beshalach", "Beshalach"},
-                    {"Yitro", "Yisro"},
-                    {"Mishpatim", "Mishpatim"},
-                    {"Terumah", "Terumah"},
-                    {"Tetzaveh", "Tetzaveh"},
-                    {"Ki Tisa", "Ki Sisa"},
-                    {"Vayakhel", "Vayakhel"},
-                    {"Pekudei", "Pekudei"},
-                    {"Vayikra", "Vayikra"},
-                    {"Tzav", "Tzav"},
-                    {"Shmini", "Shmini"},
-                    {"Tazria", "Sazria"},
-                    {"Metzora", "Metzora"},
-                    {"Achrei Mot", "Achrei Mos"},
-                    {"Kedoshim", "Kedoshim"},
-                    {"Emor", "Emor"},
-                    {"Behar", "Behar"},
-                    {"Bechukotai", "Bechukosai"},
-                    {"Bamidbar", "Bamidbar"},
-                    {"Nasso", "Nasso"},
-                    {"Beha'alotcha", "Beha'aloscha"},
-                    {"Sh'lach", "Sh'lach"},
-                    {"Korach", "Korach"},
-                    {"Chukat", "Chukas"},
-                    {"Balak", "Balak"},
-                    {"Pinchas", "Pinchas"},
-                    {"Matot", "Matos"},
-                    {"Masei", "Masei"},
-                    {"Devarim", "Devarim"},
-                    {"Vaetchanan", "Vaeschanan"},
-                    {"Eikev", "Eikev"},
-                    {"Re'eh", "Re'eh"},
-                    {"Shoftim", "Shoftim"},
-                    {"Ki Teitzei", "Ki Seitzei"},
-                    {"Ki Tavo", "Ki Savo"},
-                    {"Nitzavim", "Nitzavim"},
-                    {"Vayeilech", "Vayeilech"},
-                    {"Ha'Azinu", "Ha'Azinu"},
-                    {"Vayakhel Pekudei", "Vayakhel Pekudei"},
-                    {"Tazria Metzora", "Sazria Metzora"},
-                    {"Achrei Mot Kedoshim", "Achrei Mos Kedoshim"},
-                    {"Behar Bechukotai", "Behar Bechukosai"},
-                    {"Chukat Balak", "Chukas Balak"},
-                    {"Matot Masei", "Matos Masei"},
-                    {"Nitzavim Vayeilech", "Nitzavim Vayeilech"}
-            };
-
     /**
      * returns a String of the holiday or fast day for the current day, or an empty string
      * if there is no holiday for this day. Has no "modern" holidays.
@@ -769,10 +767,6 @@ public class RegularHebrewDate extends HebrewDate {
         }
         // if we get to this stage, then there are no holidays for the given date
         return -1;
-    }
-
-    public static String getImportantHolidayByNum(int nextHolidayNum) {
-        return nextHolidayNum == -1 ? null : RegularHebrewDate.importantHolidays[nextHolidayNum - 1];
     }
 
 
