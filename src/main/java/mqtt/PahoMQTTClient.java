@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -21,7 +22,6 @@ import java.util.Properties;
  */
 public class PahoMQTTClient implements MQTTClient {
 
-    private static final ConnectionDetails DEFAULT_CONNECTION = new ConnectionDetails("tcp://localhost:1883", null, null);
     private MqttClient client;
     private boolean initialized = true;
 
@@ -36,13 +36,12 @@ public class PahoMQTTClient implements MQTTClient {
         }
     }
 
-    private MqttConnectOptions getMqttConnectOptions(ConnectionDetails connectionDetails) {
-        MqttConnectOptions options = new MqttConnectOptions();
-        if (connectionDetails.getPassword() != null) {
-            options.setUserName(connectionDetails.getUsername());
-            options.setPassword(connectionDetails.getPassword().toCharArray());
-        }
-        return options;
+    private static ConnectionDetails defaultConnection() {
+        return new ConnectionDetailsBuilder()
+                .setUrl("tcp://localhost:1883")
+                .setUsername(null)
+                .setPassword(null)
+                .build();
     }
 
     private static void sendMail(Throwable throwable) {
@@ -61,31 +60,54 @@ public class PahoMQTTClient implements MQTTClient {
         return sw.getBuffer().toString();
     }
 
+    private MqttConnectOptions getMqttConnectOptions(ConnectionDetails connectionDetails) {
+        MqttConnectOptions options = new MqttConnectOptions();
+        if (connectionDetails.getPassword() != null) {
+            options.setUserName(connectionDetails.getUsername());
+            options.setPassword(connectionDetails.getPassword().toCharArray());
+        }
+        return options;
+    }
+
     private ConnectionDetails loadConn() {
         String firstFile = "/openhab/conf/services/mqtt.cfg";
         String secondFile = "/etc/openhab2/services/mqtt.cfg";
 
         try {
-            FileInputStream inputStream;
-            try {
-                inputStream = new FileInputStream(firstFile);
-            } catch (FileNotFoundException e) {
-                System.out.println("File not found:" + firstFile + " tries with " + secondFile);
-                inputStream = new FileInputStream(secondFile);
+            FileInputStream inputStream = openFile(firstFile);
+            if (inputStream == null) {
+                inputStream = openFile(secondFile);
             }
+
+            Objects.requireNonNull(inputStream, "Configuration files not found.");
+
             ///etc/openhab2
             Properties prop = new Properties();
             prop.load(inputStream);
 
-            return new ConnectionDetails(prop.getProperty("broker.clientid", "tcp://localhost:1883"),
-                    prop.getProperty("broker.user", null),
-                    prop.getProperty("broker.pwd", null));
+            return new ConnectionDetailsBuilder()
+                    .setUrl(prop.getProperty("broker.url", "tcp://localhost:1883"))
+                    .setUsername(prop.getProperty("broker.user", null))
+                    .setPassword(prop.getProperty("broker.pwd", null))
+                    .build();
         } catch (Exception e) {
-            System.out.println("File not found:" + secondFile);
-            System.out.println("Using default connection");
-            return DEFAULT_CONNECTION;
+            System.out.println("Unknown error, Using default connection. Error: " + e.getMessage());
+            return defaultConnection();
         }
     }
+
+
+    private FileInputStream openFile(String filename) {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(filename);
+            System.out.println("Using Configuration file:" + filename);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found:" + filename);
+        }
+        return inputStream;
+    }
+
 
     @Override
     public void publish(String topic, String value) {
@@ -97,7 +119,6 @@ public class PahoMQTTClient implements MQTTClient {
         } catch (MqttException e) {
             e.printStackTrace();
             sendMail(e);
-
         }
     }
 
