@@ -5,8 +5,8 @@ import heb.date.HebData;
 import heb.date.HebrewDate;
 import heb.date.RegularHebrewDate;
 import heb.date.cal.CalendarUtils;
+import http.HttpPublisher;
 import mqtt.MQTTClient;
-import mqtt.PahoMQTTClient;
 import util.KeysCons;
 
 import java.io.*;
@@ -29,8 +29,8 @@ public class GCal {
     private static final String sukot = "Sukkot I";
 
     //private static final String HOLIDAY_CALENDAR = "en.jewish%23holiday%40group.v.calendar.google.com";
-    private static final String SCHOOL_TOPIC = "openhab/calSchool";
-    private static final String HOLIDAY_TOPIC = "openhab/calHoliday";
+    private static final String SCHOOL_TOPIC = "openhab/schoolFree";
+    private static final String HOLIDAY_TOPIC = "openhab/holiday";
     private static final String HEB_DATE_TOPIC = "openhab/hebDate/";
     private static final String TODAY = "Today";
     private static final String TOMORROW = "Tomorrow";
@@ -41,19 +41,16 @@ public class GCal {
 
     private static final String PARASHA_ENG = "parashaEng";
     private static final String PARASHA = "parasha";
-    private static final String KNISA = "knisa";
+    private static final String KNISA = "knisatShabat";
     private static final String HAVDALA = "havdala";
-    private static final String DATE = "date";
+    private static final String DATE = "hebDate";
     private static final String HOLIDAY = "holiday";
-    private static final String DATE_ENG = "dateEng";
+    private static final String DATE_ENG = "hebDateEng";
     private static final String OMER = "omer";
 
     public static void main(String[] args) throws Exception {
-        //int daysIncrease = 0;
-        //String holiday = getCalEvent(HOLIDAY_CALENDAR, tomorrowStart, tomorrowEnd);
-        //holiday = validateHoliday(holiday);
+        //System.out.println(calcHebData());
         publishData(schoolCalc(0), schoolCalc(1), isHoliday(0), isHoliday(1), calcHebData());
-
     }
 
     private static String schoolCalc(int daysIncrease) throws IOException {
@@ -101,12 +98,14 @@ public class GCal {
 
     private static void publishData(String schoolToday, String schoolTomorrow, String holidayToday, String holidayTomorrow, HebData hebData) throws IOException {
         //final SimpleMQTTClient sc = new SimpleMQTTClient("localhost");
-        try (MQTTClient sc = new PahoMQTTClient()){
-            sc.publish(SCHOOL_TOPIC, schoolTomorrow);
-            sc.publish(HOLIDAY_TOPIC, holidayTomorrow);
+        //try (MQTTClient sc = new PahoMQTTClient()){
+        try (MQTTClient sc = new HttpPublisher()) {
+            //sc.publish(SCHOOL_TOPIC, schoolTomorrow);
+            //sc.publish(HOLIDAY_TOPIC, holidayTomorrow);
 
             sc.publish(SCHOOL_TOPIC + TODAY, parseHoliday(schoolToday));
             sc.publish(SCHOOL_TOPIC + TOMORROW, parseHoliday(schoolTomorrow));
+            //sc.publish(HOLIDAY_TOPIC + TODAY, parseHoliday(holidayToday));
             sc.publish(HOLIDAY_TOPIC + TODAY, parseHoliday(holidayToday));
             sc.publish(HOLIDAY_TOPIC + TOMORROW, parseHoliday(holidayTomorrow));
 
@@ -177,7 +176,7 @@ public class GCal {
 
         HebData hebData = new HebData(RegularHebrewDate.getParasha(parshaNum),
                 RegularHebrewDate.getParashaEng(parshaNum),
-                knisa, havdala, date.getHoliday(), date.getOmerAsString(),
+                knisa, havdala, currDate.getHoliday(), currDate.getOmerAsString(),
                 CalendarUtils.getToday(), currDate.getHebrewDateAsString());
         System.out.println("hebData = " + hebData);
         return hebData;
