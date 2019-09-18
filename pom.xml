@@ -13,7 +13,7 @@
         <mqtt-client.version>1.10</mqtt-client.version>
         <mail.version>1.4.7</mail.version>
         <gson.version>2.6.2</gson.version>
-        <org.eclipse.paho.client.mqttv3.version>1.0.2</org.eclipse.paho.client.mqttv3.version>
+        <org.eclipse.paho.client.mqttv3.version>1.2.1</org.eclipse.paho.client.mqttv3.version>
     </properties>
 
     <build>
