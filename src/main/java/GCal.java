@@ -1,5 +1,6 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import heb.date.CandleLighting;
 import heb.date.HebData;
 import heb.date.HebrewDate;
@@ -10,11 +11,14 @@ import mqtt.MQTTClient;
 import util.KeysCons;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.ParseException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ahielg
@@ -25,8 +29,10 @@ public class GCal {
 
     private static final Gson gson = new GsonBuilder().create();
     @SuppressWarnings("SpellCheckingInspection")
+/*
     private static final List<String> holidays = Arrays.asList("Shavuot", "Pesach I ", "Pesach VII ", "Shmini Atzeret", "Rosh Hashana", "Kippur");
     private static final String sukot = "Sukkot I";
+*/
 
     //private static final String HOLIDAY_CALENDAR = "en.jewish%23holiday%40group.v.calendar.google.com";
     private static final String SCHOOL_TOPIC = "openhab/schoolFree";
@@ -34,7 +40,7 @@ public class GCal {
     private static final String HEB_DATE_TOPIC = "openhab/hebDate/";
     private static final String TODAY = "Today";
     private static final String TOMORROW = "Tomorrow";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    //private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private static final String ITEMS = "items";
     private static final String SUMMARY = "summary";
@@ -54,6 +60,7 @@ public class GCal {
     }
 
     private static String schoolCalc(int daysIncrease) throws IOException {
+        //noinspection SpellCheckingInspection
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String todayStart = simpleDateFormat.format(theDate(daysIncrease)) + "-00:00";
         String todayEnd = simpleDateFormat.format(theEndDate(daysIncrease)) + "-00:00";
@@ -61,6 +68,7 @@ public class GCal {
         System.out.println(todayEnd);
         return getCalEvent(KeysCons.SCHOOL_CALENDAR, todayStart, todayEnd);
     }
+/*
 
     private static String validateHoliday(String holiday) {
         String result = holiday;
@@ -70,15 +78,16 @@ public class GCal {
         }
         return result;
     }
+*/
 
-    private static String getCalEvent(String calendar, String start, String end) throws IOException {
-        HashMap json1 = readJsonFromUrl("https://www.googleapis.com/calendar/v3/calendars/" + calendar + "/events?key=" + KeysCons.KEY + "&timeMin=" + start + "&timeMax=" + end);
+    private static String getCalEvent(@SuppressWarnings("SameParameterValue") String calendarId, String start, String end) throws IOException {
+        Map<String, Object> json1 = readJsonFromUrl("https://www.googleapis.com/calendar/v3/calendars/" + calendarId + "/events?key=" + KeysCons.KEY + "&timeMin=" + start + "&timeMax=" + end);
         String result = getEvent(json1);
         System.out.println(result + " ::: " + json1.toString());
         return result;
     }
 
-    private static String getEvent(HashMap map) {
+    private static String getEvent(Map<String, Object> map) {
         String result = "NA";
         List items = ((List) map.get(ITEMS));
         if (!items.isEmpty()) {
@@ -87,22 +96,19 @@ public class GCal {
         }
         return result;
     }
-
+/*
     private static Date convertToDate(String s) {
         try {
             return DATE_FORMAT.parse(s);
         } catch (ParseException e) {
             return new Date();
         }
-    }
+    }*/
 
     private static void publishData(String schoolToday, String schoolTomorrow, String holidayToday, String holidayTomorrow, HebData hebData) throws IOException {
         //final SimpleMQTTClient sc = new SimpleMQTTClient("localhost");
         //try (MQTTClient sc = new PahoMQTTClient()){
         try (MQTTClient sc = new HttpPublisher()) {
-            //sc.publish(SCHOOL_TOPIC, schoolTomorrow);
-            //sc.publish(HOLIDAY_TOPIC, holidayTomorrow);
-
             sc.publish(SCHOOL_TOPIC + TODAY, parseHoliday(schoolToday));
             sc.publish(SCHOOL_TOPIC + TOMORROW, parseHoliday(schoolTomorrow));
             //sc.publish(HOLIDAY_TOPIC + TODAY, parseHoliday(holidayToday));
@@ -119,7 +125,6 @@ public class GCal {
             sc.publish(HEB_DATE_TOPIC + OMER, hebData.getOmer());
         }
     }
-
 
 
     private static String parseHoliday(String holiday) {
@@ -156,9 +161,9 @@ public class GCal {
         RegularHebrewDate currDate = new RegularHebrewDate(cal);
 
         RegularHebrewDate date = RegularHebrewDate.getNextShabatDate(cal);
-        int parshaNum = date.getParshaNum();
+        int parashaNum = date.getParshaNum();
 
-        RegularHebrewDate.getParashaEng(parshaNum);
+        RegularHebrewDate.getParashaEng(parashaNum);
 
         Calendar c = cal;
         CandleLighting candleLighting = new CandleLighting(new HebrewDate(c));
@@ -174,8 +179,8 @@ public class GCal {
         }
         String havdala = candleLighting.getHavdala();
 
-        HebData hebData = new HebData(RegularHebrewDate.getParasha(parshaNum),
-                RegularHebrewDate.getParashaEng(parshaNum),
+        HebData hebData = new HebData(RegularHebrewDate.getParasha(parashaNum),
+                RegularHebrewDate.getParashaEng(parashaNum),
                 knisa, havdala, currDate.getHoliday(), currDate.getOmerAsString(),
                 CalendarUtils.getToday(), currDate.getHebrewDateAsString());
         System.out.println("hebData = " + hebData);
@@ -201,11 +206,15 @@ public class GCal {
         return sb.toString();
     }
 
-    private static HashMap readJsonFromUrl(String url) throws IOException {
+    private static Map<String, Object> readJsonFromUrl(String url) throws IOException {
         try (InputStream is = new URL(url).openStream()) {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
-            return gson.fromJson(jsonText, HashMap.class);
+            Type mapType = new TypeToken<Map<String, Object>>() {
+            }.getType();
+
+            return gson.fromJson(jsonText, mapType);
+            //return gson.fromJson(jsonText, HashMap.class);
         }
     }
 
@@ -215,9 +224,11 @@ public class GCal {
         //if there is no time zone, we don't need to do any special parsing.
         if (dateString.endsWith("Z")) {
             try {
+                //noinspection SpellCheckingInspection
                 SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");//spec for RFC3339
                 d = s.parse(dateString);
             } catch (java.text.ParseException pe) {//try again with optional decimals
+                //noinspection SpellCheckingInspection
                 SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");//spec for RFC3339 (with fractional seconds)
                 s.setLenient(true);
                 d = s.parse(dateString);
@@ -232,10 +243,12 @@ public class GCal {
         //step two, remove the colon from the timezone offset
         secondPart = secondPart.substring(0, secondPart.indexOf(':')) + secondPart.substring(secondPart.indexOf(':') + 1);
         dateString = firstPart + secondPart;
+        //noinspection SpellCheckingInspection
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");//spec for RFC3339
         try {
             d = s.parse(dateString);
         } catch (java.text.ParseException pe) {//try again with optional decimals
+            //noinspection SpellCheckingInspection
             s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ");//spec for RFC3339 (with fractional seconds)
             s.setLenient(true);
             d = s.parse(dateString);
