@@ -23,29 +23,31 @@ import java.util.Date;
  */
 @SuppressWarnings("UnusedDeclaration")
 public class RegularHebrewDate extends HebrewDate {
-    public static final String[] importantHolidays = {"ôñç",
-            "ùáåòåú",
-            "éæ áúîåæ",
-            "úùòä áàá",
-            "èå áàá",
-            "øàù äùğä",
-            "éåí ëéôåø",
-            "ñåëåú",
-            "ùîçú úåøä",
-            "çğåëä",
-            "òùøä áèáú",
-            "èå áùáè",
-            "ôåøéí"
+    public static final String[] importantHolidays = {
+            "×¤×¡×—",
+            "×©×‘×•×¢×•×ª",
+            "×¨××© ×”×©× ×”",
+            "×™×•× ×›×™×¤×•×¨",
+            "×¡×•×›×•×ª",
+            "×©××™× ×™ ×¢×¦×¨×ª",
+            "×©××—×ª ×ª×•×¨×”",
+            "×—× ×•×›×”",
+            "×¤×•×¨×™×",
+            "×¤×•×¨×™× ×©×•×©×Ÿ",
+            "×™×•× ×”×¢×¦×××•×ª",
+            "×œ×’ ×‘×¢×•××¨",
+            "×˜×• ×‘××‘"
     };
     // parsha names in both ashkenazi and sephardi pronunciation
     // Somewhat redundant (don't you think?)
     private static final String[] parshios =
-            {"áøàùéú", "ğç", "ìê ìê", "åéøà", "çéé ùøä", "úåìãåú", "åéöà", "åéùìç", "åéùá", "î÷õ", "åéâù", "åéçé",
-                    "ùîåú", "åàøà", "áà", "áùìç", "éúøå", "îùôèéí", "úøåîä", "úöåä", "ëé úùà", "åé÷äì", "ô÷åãé",
-                    "åé÷øà", "öå", "ùîéğé", "úæøéò", "îöåøò", "àçøé îåú", "÷ãåùéí", "àîåø", "áäø", "áçå÷åúé"
-                    , "áîãáø", "ğùà", "áäòìåúê", "ùìç", "÷øç", "çå÷ú", "áì÷", "ôğçñ", "îèåú", "îñòé",
-                    "ãáøéí", "åàúçğï", "ò÷á", "øàä", "ùåôèéí", "ëé úöà", "ëé úáåà", "ğöáéí", "åéìê", "äàæéğå",
-                    "åé÷äì-ô÷åãé", "úæøéò-îöåøò", "àçøé îåú-÷ãåùéí", "áäø-áçå÷åúé", "çå÷ú-áì÷", "îèåú-îñòé", "ğöáéí-åéìê"};
+            {"×‘×¨××©×™×ª", "× ×—", "×œ×š ×œ×š", "×•×™×¨×", "×—×™×™ ×©×¨×”", "×ª×•×œ×“×•×ª", "×•×™×¦×", "×•×™×©×œ×—", "×•×™×©×‘", "××§×¥", "×•×™×’×©", "×•×™×—×™",
+                    "×©××•×ª", "×•××¨×", "×‘×", "×‘×©×œ×—", "×™×ª×¨×•", "××©×¤×˜×™×", "×ª×¨×•××”", "×ª×¦×•×”", "×›×™ ×ª×©×", "×•×™×§×”×œ", "×¤×§×•×“×™",
+                    "×•×™×§×¨×", "×¦×•", "×©××™× ×™", "×ª×–×¨×™×¢", "××¦×•×¨×¢", "××—×¨×™ ××•×ª", "×§×“×•×©×™×", "×××•×¨", "×‘×”×¨", "×‘×—×•×§×•×ª×™"
+                    , "×‘××“×‘×¨", "× ×©×", "×‘×”×¢×œ×•×ª×š", "×©×œ×—", "×§×¨×—", "×—×§×ª", "×‘×œ×§", "×¤× ×—×¡", "××˜×•×ª", "××¡×¢×™",
+                    "×“×‘×¨×™×", "×•××ª×—× ×Ÿ", "×¢×§×‘", "×¨××”", "×©×•×¤×˜×™×", "×›×™ ×ª×¦×", "×›×™ ×ª×‘×•×", "× ×¦×‘×™×", "×•×™×œ×š", "×”××–×™× ×•",
+                    "×•×™×§×”×œ-×¤×§×•×“×™", "×ª×–×¨×™×¢-××¦×•×¨×¢", "××—×¨×™ ××•×ª-×§×“×•×©×™×", "×‘×”×¨-×‘×—×•×§×•×ª×™", "×—×•×§×ª-×‘×œ×§", "××˜×•×ª-××¡×¢×™", "× ×¦×‘×™×-×•×™×œ×š"};
+
     private static final int[] Sat_short =
             {-1, 52, -1, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 53, 23, 24, -1, 25,
@@ -189,7 +191,7 @@ public class RegularHebrewDate extends HebrewDate {
                     "Matot Masei",
                     "Nitzavim Vayeilech"
             };
-    private static String[] DAYS = {"øàùåï", "ùğé", "ùìéùé", "øáéòé", "çîéùé", "ùéùé", "ùáú"};
+    private static final String[] DAYS = {"×¨××©×•×Ÿ", "×©× ×™", "×©×œ×™×©×™", "×¨×‘×™×¢×™", "×—××™×©×™", "×©×™×©×™", "×©×‘×ª"};
     private boolean israeli = true;
 
     /**
@@ -266,12 +268,10 @@ public class RegularHebrewDate extends HebrewDate {
     }
 
     public static String getParashaAsString(int parashaNum) {
-        String parasha = "ôøùú " + RegularHebrewDate.getParasha(parashaNum);
         if (parashaNum > 52) {
-            String parasha1 = RegularHebrewDate.getParasha(parashaNum);
-            parasha = "ôøùåú " + RegularHebrewDate.getParasha(parashaNum);
+            return "×¤×¨×©×™×•×ª " + getParasha(parashaNum);
         }
-        return parasha;
+        return "×¤×¨×©×ª " + getParasha(parashaNum);
     }
 
     public static int getNextHolidayNum(Calendar calendar, int daysToCheck) {
@@ -339,20 +339,19 @@ public class RegularHebrewDate extends HebrewDate {
     }
 
     public static String getCandleAndHavdala() {
-        StringBuilder sb = new StringBuilder("äãì÷ú ğøåú:");
+        StringBuilder sb = new StringBuilder("×¤×¨×©×ª ×”×©×‘×•×¢:");
         Calendar c = Calendar.getInstance();
         CandleLighting cl = new CandleLighting(new HebrewDate(c));
         while ("".equals(cl.getCandleLighting())) {
             c.add(Calendar.DAY_OF_MONTH, 1);
             cl = new CandleLighting(new HebrewDate(c));
         }
-        sb.append(cl.getCandleLighting()).append(", öàú ùáú:");
+        sb.append(cl.getCandleLighting()).append(", ×¢×¨×‘ ×©×‘×ª:");
         while ("".equals(cl.getHavdala())) {
             c.add(Calendar.DAY_OF_MONTH, 1);
             cl = new CandleLighting(new HebrewDate(c));
         }
-        sb.append(cl.getHavdala()).append(" òãëğé ì").append(cl.getDefaultLocale().getName());
-
+        sb.append(cl.getHavdala()).append(" ××•×¦××™ ×©").append(cl.getDefaultLocale().getName());
         return sb.toString();
     }
 
@@ -381,122 +380,64 @@ public class RegularHebrewDate extends HebrewDate {
      * @return A String containing the holiday name or an empty string.
      */
     public String getHoliday() {
-        // check by month (starts from Nissan)
         switch (hebrewMonth) {
             case 1:
-                if (hebrewDate == 14)
-                    return "òøá ôñç";
-
-                if (hebrewDate == 15 || hebrewDate == 21 || (!israeli && (hebrewDate == 16 || hebrewDate == 22)))
-                    return "ôñç";
-
-                if (hebrewDate >= 17 && hebrewDate <= 20 || (hebrewDate == 16 && israeli))
-                    return "çåì äîåòã ôñç";
+                if (hebrewDate == 14) return "×¢×¨×‘ ×¤×¡×—";
+                if (hebrewDate == 15 || hebrewDate == 21 || (!israeli && (hebrewDate == 16 || hebrewDate == 22))) return "×¤×¡×—";
+                if (hebrewDate >= 17 && hebrewDate <= 20 || (hebrewDate == 16 && israeli)) return "×—×•×œ ×”××•×¢×“ ×¤×¡×—";
                 break;
             case 2:
-                if (hebrewDate == 14)
-                    return "ôñç ùğé";
+                if (hebrewDate == 14) return "×¤×¡×— ×©× ×™";
                 break;
             case 3:
-                if (hebrewDate == 5) {
-                    return "òøá ùáåòåú";
-                }
-                if (hebrewDate == 6 || (hebrewDate == 7 && !israeli)) {
-                    return "ùáåòåú";
-                }
+                if (hebrewDate == 5) return "×¢×¨×‘ ×©×‘×•×¢×•×ª";
+                if (hebrewDate == 6 || (hebrewDate == 7 && !israeli)) return "×©×‘×•×¢×•×ª";
                 break;
             case 4:
-                // push off the fast day if it falls on shabbos//
-                if ((hebrewDate == 17 && day != 7) || (hebrewDate == 18 && day == 1))
-                    return "éæ áúîåæ";
+                if ((hebrewDate == 17 && day != 7) || (hebrewDate == 18 && day == 1)) return "×™×– ×‘×ª××•×–";
                 break;
             case 5:
-                // if tisha b'av falls on shabbos, push off until sunday//
-                if ((day == 1 && hebrewDate == 10) || (day != 7 && hebrewDate == 9))
-                    return "úùòä áàá";
-                if (hebrewDate == 15)
-                    return "èå áàá";
+                if ((day == 1 && hebrewDate == 10) || (day != 7 && hebrewDate == 9)) return "×ª×©×¢×” ×‘××‘";
+                if (hebrewDate == 15) return "×˜×• ×‘××‘";
                 break;
             case 6:
-                if (hebrewDate == 29)
-                    return "òøá øàù äùğä";
+                if (hebrewDate == 29) return "×¢×¨×‘ ×¨××© ×”×©× ×”";
                 break;
             case 7:
-                if (hebrewDate == 1 || hebrewDate == 2)
-                    return "øàù äùğä";
-                // push off tzom gedalia if it falls on Shabbos //
-                if ((hebrewDate == 3 && day != 7) || (hebrewDate == 4 && day == 1))
-                    return "öåí âãìéä";
-                if (hebrewDate == 9)
-                    return "òøá éåí ëéôåø";
-                if (hebrewDate == 10)
-                    return "éåí ëéôåø";
-                if (hebrewDate == 14) {
-                    return "òøá ñåëåú";
-                }
-                if (hebrewDate == 15 || (hebrewDate == 16 && !israeli)) {
-                    return "ñåëåú";
-                }
-                if (hebrewDate >= 17 && hebrewDate <= 20 || (hebrewDate == 16 && israeli)) {
-                    return "çåì äîåòã ñåëåú";
-                }
-                if (hebrewDate == 21)
-                    return "äåùòğä øáä";
-                if (hebrewDate == 22) {
-                    return "ùîéğé òöøú";
-                }
-                if (hebrewDate == 23 && !israeli) {
-                    return "ùîçú úåøä";
-                }
+                if (hebrewDate == 1 || hebrewDate == 2) return "×¨××© ×”×©× ×”";
+                if ((hebrewDate == 3 && day != 7) || (hebrewDate == 4 && day == 1)) return "×¦×•× ×’×“×œ×™×”";
+                if (hebrewDate == 9) return "×¢×¨×‘ ×™×•× ×›×™×¤×•×¨";
+                if (hebrewDate == 10) return "×™×•× ×›×™×¤×•×¨";
+                if (hebrewDate == 14) return "×¢×¨×‘ ×¡×•×›×•×ª";
+                if (hebrewDate == 15 || (hebrewDate == 16 && !israeli)) return "×¡×•×›×•×ª";
+                if (hebrewDate >= 17 && hebrewDate <= 20 || (hebrewDate == 16 && israeli)) return "×—×•×œ ×”××•×¢×“ ×¡×•×›×•×ª";
+                if (hebrewDate == 21) return "×”×•×©×¢× × ×¨×‘×";
+                if (hebrewDate == 22) return "×©××™× ×™ ×¢×¦×¨×ª";
+                if (hebrewDate == 23 && !israeli) return "×©××—×ª ×ª×•×¨×”";
                 break;
             case 9:
-                if (hebrewDate == 24)
-                    return "òøá çğåëä";
-                if (hebrewDate >= 25)
-                    return "çğåëä";
+                if (hebrewDate == 24) return "×¢×¨×‘ ×—× ×•×›×”";
+                if (hebrewDate >= 25) return "×—× ×•×›×”";
                 break;
             case 10:
-                if (hebrewDate == 1 || hebrewDate == 2 || (hebrewDate == 3 && isKislevShort()))
-                    return "çğåëä";
-                if (hebrewDate == 10) {
-                    return "òùøä áèáú";
-                }
+                if (hebrewDate == 1 || hebrewDate == 2 || (hebrewDate == 3 && isKislevShort())) return "×—× ×•×›×”";
+                if (hebrewDate == 10) return "×¢×©×¨×” ×‘×˜×‘×ª";
                 break;
             case 11:
-                if (hebrewDate == 15)
-                    return "èå áùáè";
+                if (hebrewDate == 15) return "×˜×• ×‘×©×‘×˜";
                 break;
             case 12:
-                if (!isHebrewLeapYear()) {
-                    // if 13th adar falls on fri or shabbos, push back to thursday
-                    if (((hebrewDate == 11 || hebrewDate == 12) && day == 5) ||
-                            (hebrewDate == 13 && !(day == 6 || day == 7))) {
-                        return "úòğéú àñúø";
-                    }
-                    if (hebrewDate == 14)
-                        return "ôåøéí";
-                    if (hebrewDate == 15)
-                        return "ùåùï ôåøéí";
-                }
-                // else if a leap year //
-                else {
-                    if (hebrewDate == 14)
-                        return "ôåøéí ÷èï";
-                }
-                break;
             case 13:
-                // if 13th adar falls on fri or shabbos, push back to thursday
-                if (((hebrewDate == 11 || hebrewDate == 12) && day == 5) ||
-                        (hebrewDate == 13 && !(day == 6 || day == 7))) {
-                    return "úòğéú àñúø";
+                // ×˜×™×¤×•×œ ×‘×¤×•×¨×™× (×›×•×œ×œ ×©× ×” ××¢×•×‘×¨×ª)
+                if ((hebrewMonth == 12 && !isHebrewLeapYear()) || hebrewMonth == 13) {
+                    if (((hebrewDate == 11 || hebrewDate == 12) && day == 5) || (hebrewDate == 13 && !(day == 6 || day == 7))) return "×ª×¢× ×™×ª ××¡×ª×¨";
+                    if (hebrewDate == 14) return "×¤×•×¨×™×";
+                    if (hebrewDate == 15) return "×¤×•×¨×™× ×©×•×©×Ÿ";
+                } else if (hebrewMonth == 12 && isHebrewLeapYear()) {
+                    if (hebrewDate == 14) return "×¤×•×¨×™× ×§×˜×Ÿ";
                 }
-                if (hebrewDate == 14)
-                    return "ôåøéí";
-                if (hebrewDate == 15)
-                    return "ùåùï ôåøéí";
                 break;
         }
-        // if we get to this stage, then there are no holidays for the given date
         return "";
     }
 
@@ -561,16 +502,9 @@ public class RegularHebrewDate extends HebrewDate {
      */
     public String getOmerAsString() {
         int omer = getOmer();
-
-        // if not omer day //
-        if (omer == 0)
-            return "";
-            // if lag b'omer //
-        else if (omer == 33)
-            return "ìâ áòåîø";
-        else
-            return omer + " éîéí ìòåîø";
-
+        if (omer == 0) return "";
+        if (omer == 33) return "×œ×’ ×‘×¢×•××¨";
+        return omer + " ×™××™× ×œ×¢×•××¨";
     }
 
     /**
@@ -711,14 +645,14 @@ public class RegularHebrewDate extends HebrewDate {
 /*            case 4:
                 // push off the fast day if it falls on shabbos//
                 if ((hebrewDate == 17 && day != 7) || (hebrewDate == 18 && day == 1))
-                    return "éæ áúîåæ";
+                    return "ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½";
                 break;*/
 /*            case 5:
                 // if tisha b'av falls on shabbos, push off until sunday//
                 if ((day == 1 && hebrewDate == 10) || (day != 7 && hebrewDate == 9))
-                    return "úùòä áàá";
+                    return "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½";
                 if (hebrewDate == 15)
-                    return "èå áàá";
+                    return "ï¿½ï¿½ ï¿½ï¿½ï¿½";
                 break;*/
             case 6:
                 if (hebrewDate == 29)

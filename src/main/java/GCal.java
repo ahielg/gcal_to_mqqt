@@ -6,8 +6,8 @@ import heb.date.HebData;
 import heb.date.HebrewDate;
 import heb.date.RegularHebrewDate;
 import heb.date.cal.CalendarUtils;
-import http.HttpPublisher;
 import mqtt.MQTTClient;
+import mqtt.PahoMQTTClient;
 import util.KeysCons;
 
 import java.io.*;
@@ -22,13 +22,12 @@ import java.util.Map;
 
 /**
  * @author Ahielg
- * @date 29/05/2016
+ * Date 29/05/2016
  */
 
 public class GCal {
 
     private static final Gson gson = new GsonBuilder().create();
-    @SuppressWarnings("SpellCheckingInspection")
 /*
     private static final List<String> holidays = Arrays.asList("Shavuot", "Pesach I ", "Pesach VII ", "Shmini Atzeret", "Rosh Hashana", "Kippur");
     private static final String sukot = "Sukkot I";
@@ -55,12 +54,26 @@ public class GCal {
     private static final String OMER = "omer";
 
     public static void main(String[] args) throws Exception {
-        //System.out.println(calcHebData());
-        publishData(schoolCalc(0), schoolCalc(1), isHoliday(0), isHoliday(1), calcHebData());
+        System.out.println("Starting GCal process...");
+        try {
+            String schoolToday = schoolCalc(0);
+            String schoolTomorrow = schoolCalc(1);
+            String holidayToday = isHoliday(0);
+            String holidayTomorrow = isHoliday(1);
+
+            HebData hebData = calcHebData();
+
+            System.out.println("Data collected, publishing...");
+            publishData(schoolToday, schoolTomorrow, holidayToday, holidayTomorrow, hebData);
+            System.out.println("Process finished successfully.");
+        } catch (Exception e) {
+            System.err.println("Error in GCal main process");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     private static String schoolCalc(int daysIncrease) throws IOException {
-        //noinspection SpellCheckingInspection
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         String todayStart = simpleDateFormat.format(theDate(daysIncrease)) + "-00:00";
         String todayEnd = simpleDateFormat.format(theEndDate(daysIncrease)) + "-00:00";
@@ -68,22 +81,11 @@ public class GCal {
         System.out.println(todayEnd);
         return getCalEvent(KeysCons.SCHOOL_CALENDAR, todayStart, todayEnd);
     }
-/*
-
-    private static String validateHoliday(String holiday) {
-        String result = holiday;
-        if (!sukot.equals(holiday)
-                && holidays.stream().noneMatch(holiday::contains)) {
-            result = "NA";
-        }
-        return result;
-    }
-*/
 
     private static String getCalEvent(@SuppressWarnings("SameParameterValue") String calendarId, String start, String end) throws IOException {
         Map<String, Object> json1 = readJsonFromUrl("https://www.googleapis.com/calendar/v3/calendars/" + calendarId + "/events?key=" + KeysCons.KEY + "&timeMin=" + start + "&timeMax=" + end);
         String result = getEvent(json1);
-        System.out.println(result + " ::: " + json1.toString());
+        System.out.println(result + " ::: " + json1);
         return result;
     }
 
@@ -107,8 +109,8 @@ public class GCal {
 
     private static void publishData(String schoolToday, String schoolTomorrow, String holidayToday, String holidayTomorrow, HebData hebData) throws IOException {
         //final SimpleMQTTClient sc = new SimpleMQTTClient("localhost");
-        //try (MQTTClient sc = new PahoMQTTClient()){
-        try (MQTTClient sc = new HttpPublisher()) {
+        try (MQTTClient sc = new PahoMQTTClient()){
+        //try (MQTTClient sc = new HttpPublisher()) {
             sc.publish(SCHOOL_TOPIC + TODAY, parseHoliday(schoolToday));
             sc.publish(SCHOOL_TOPIC + TOMORROW, parseHoliday(schoolTomorrow));
             //sc.publish(HOLIDAY_TOPIC + TODAY, parseHoliday(holidayToday));
@@ -158,24 +160,23 @@ public class GCal {
 
     private static HebData calcHebData() {
         Calendar cal = Calendar.getInstance();
-        RegularHebrewDate currDate = new RegularHebrewDate(cal);
+        RegularHebrewDate currDate =  new RegularHebrewDate(cal);
 
         RegularHebrewDate date = RegularHebrewDate.getNextShabatDate(cal);
         int parashaNum = date.getParshaNum();
 
         RegularHebrewDate.getParashaEng(parashaNum);
 
-        Calendar c = cal;
-        CandleLighting candleLighting = new CandleLighting(new HebrewDate(c));
+        CandleLighting candleLighting = new CandleLighting(new HebrewDate(cal));
         while ("".equals(candleLighting.getCandleLighting())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            candleLighting = new CandleLighting(new HebrewDate(c));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            candleLighting = new CandleLighting(new HebrewDate(cal));
         }
         String knisa = candleLighting.getCandleLighting();
 
         while ("".equals(candleLighting.getHavdala())) {
-            c.add(Calendar.DAY_OF_MONTH, 1);
-            candleLighting = new CandleLighting(new HebrewDate(c));
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+            candleLighting = new CandleLighting(new HebrewDate(cal));
         }
         String havdala = candleLighting.getHavdala();
 
@@ -224,11 +225,9 @@ public class GCal {
         //if there is no time zone, we don't need to do any special parsing.
         if (dateString.endsWith("Z")) {
             try {
-                //noinspection SpellCheckingInspection
                 SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");//spec for RFC3339
                 d = s.parse(dateString);
             } catch (java.text.ParseException pe) {//try again with optional decimals
-                //noinspection SpellCheckingInspection
                 SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'");//spec for RFC3339 (with fractional seconds)
                 s.setLenient(true);
                 d = s.parse(dateString);
@@ -243,12 +242,10 @@ public class GCal {
         //step two, remove the colon from the timezone offset
         secondPart = secondPart.substring(0, secondPart.indexOf(':')) + secondPart.substring(secondPart.indexOf(':') + 1);
         dateString = firstPart + secondPart;
-        //noinspection SpellCheckingInspection
         SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");//spec for RFC3339
         try {
             d = s.parse(dateString);
         } catch (java.text.ParseException pe) {//try again with optional decimals
-            //noinspection SpellCheckingInspection
             s = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSZ");//spec for RFC3339 (with fractional seconds)
             s.setLenient(true);
             d = s.parse(dateString);

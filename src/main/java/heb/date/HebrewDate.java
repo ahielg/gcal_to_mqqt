@@ -42,9 +42,11 @@ public class HebrewDate implements Comparable, Cloneable {
     private static final int HEBREW_EPOCH = -1373429;
 
     //private static final String[] hebrewMonths = {"Nissan", "Iyar", "Sivan", "Tamuz", "Av", "Elul", "Tishrei", "Cheshvan", "Kislev", "Teves", "Shvat", "Adar", "Adar II"};
-    private static final String[] hebrewMonths = {"����", "����", "�����", "����",
-            "��", "����", "����", "�����",
-            "�����", "���", "���", "���", "��� �'"};
+    private static final String[] hebrewMonths = {
+            "ניסן", "אייר", "סיון", "תמוז",
+            "אב", "אלול", "תשרי", "חשון",
+            "כסלו", "טבת", "שבט", "אדר", "אדר ב'"
+    };
 
     private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
     protected int hebrewMonth;
@@ -62,6 +64,97 @@ public class HebrewDate implements Comparable, Cloneable {
     // from this source with minor modifications.
 
     /**
+     * Inits date based on gregorian date (month, day, year)
+     */
+    public HebrewDate(int month, int date, int year) throws HebrewDateException {
+        // put in nicer message in exception
+        if (month == CURRENT_MONTH || date == CURRENT_DATE || year == CURRENT_YEAR)
+            throw new HebrewDateException("Illegal value in constructor.");
+        setDate(month, date, year);
+    }
+
+    /**
+     * Initializes a date based on the current system date.
+     */
+    public HebrewDate() {
+        resetDate();
+    }
+
+    /**
+     * Initializes a date based on java.util.Date object.
+     */
+    public HebrewDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        setDate(cal);
+    }
+
+    /**
+     * Initializes a date based on java.util.Calendar object.
+     */
+    public HebrewDate(Calendar cal) {
+        setDate(cal);
+    }
+
+    /**
+     * returns true if the year is an Hebrew leap year.
+     */
+    public static boolean isHebrewLeapYear(int year) {
+        return (((7 * year) + 1) % 19) < 7;
+    }
+
+    public static String gimatria(int n) {
+        StringBuilder gimatria = new StringBuilder();
+        if (n % 1000 == 0) {
+            gimatria.append(gimatria(n / 1000)).append(" אלפים");
+            return gimatria.toString();
+        } else if (n > 1000) {
+            // הערה: בדרך כלל נהוג להוסיף גרש אחרי האלפים, למשל ה'תשפ"ד
+            gimatria.append(gimatria(n / 1000)).append(gimatria(n % 1000));
+            return gimatria.toString();
+        }
+
+        StringBuilder p = new StringBuilder();
+        while (n >= 400) {
+            p.append("ת");
+            n -= 400;
+        }
+
+        if (n >= 100) {
+            p.append("קרא".charAt(n / 100 - 1));
+            n %= 100;
+        }
+
+        if (n >= 10) {
+            // תיקון מובנה עבור יה-יו לט-טו
+            if ((n == 15) || (n == 16)) {
+                n -= 9;
+            }
+
+            if (n / 10 > 0) {
+                p.append("יכלמנסעפצ".charAt(n / 10 - 1));
+            } else {
+                // טיפול במקרה של ט"ו/ט"ז אחרי ההפחתה
+                p.append('ט');
+            }
+            n %= 10;
+        }
+
+        if (n > 0) {
+            p.append("אבגדהוזחט".charAt(n - 1));
+        }
+
+        // הוספת גרשיים או גרש לפורמט תקני
+        if (p.length() <= 1) {
+            p.append('\'');
+        } else {
+            p.insert(p.length() - 1, '"');
+        }
+
+        return p.toString();
+    }
+
+    /**
      * Gets how many days are in a month.
      */
     // ND+ER
@@ -69,7 +162,7 @@ public class HebrewDate implements Comparable, Cloneable {
         switch (month) {
             case 2:
                 if ((((year % 4) == 0) && ((year % 100) != 0))
-                        || ((year % 400) == 0))
+                    || ((year % 400) == 0))
                     return 29;
                 else
                     return 28;
@@ -120,17 +213,10 @@ public class HebrewDate implements Comparable, Cloneable {
             date = date + getLastDayOfMonth(m);
         return
                 (date                    // days this year //
-                        + 365 * (year - 1)    // days in previous years ignoring leap days //
-                        + (year - 1) / 4        // Julian leap days before this year... //
-                        - (year - 1) / 100        // ...minus prior century years... //
-                        + (year - 1) / 400);    // ...plus prior years divisible by 400 //
-    }
-
-    /**
-     * returns true if the year is an Hebrew leap year.
-     */
-    public static boolean isHebrewLeapYear(int year) {
-        return (((7 * year) + 1) % 19) < 7;
+                 + 365 * (year - 1)    // days in previous years ignoring leap days //
+                 + (year - 1) / 4        // Julian leap days before this year... //
+                 - (year - 1) / 100        // ...minus prior century years... //
+                 + (year - 1) / 400);    // ...plus prior years divisible by 400 //
     }
 
     /**
@@ -157,20 +243,20 @@ public class HebrewDate implements Comparable, Cloneable {
 
         int monthsElapsed =
                 (235 * ((year - 1) / 19))            // Months in complete cycles so far.//
-                        + (12 * ((year - 1) % 19))            // Regular months in this cycle.//
-                        + (7 * ((year - 1) % 19) + 1) / 19; // Leap months this cycle//
+                + (12 * ((year - 1) % 19))            // Regular months in this cycle.//
+                + (7 * ((year - 1) % 19) + 1) / 19; // Leap months this cycle//
         int partsElapsed = 204 + 793 * (monthsElapsed % 1080);
         int hoursElapsed =
                 5 + 12 * monthsElapsed + 793 * (monthsElapsed / 1080)
-                        + partsElapsed / 1080;
+                + partsElapsed / 1080;
         int conjunctionDay = 1 + 29 * monthsElapsed + hoursElapsed / 24;
         int conjunctionParts = 1080 * (hoursElapsed % 24) + partsElapsed % 1080;
         int alternativeDay;
         if ((conjunctionParts >= 19440)         // If new moon is at or after midday,//
-                || (((conjunctionDay % 7) == 2)     // ...or is on a Tuesday...//
+            || (((conjunctionDay % 7) == 2)     // ...or is on a Tuesday...//
                 && (conjunctionParts >= 9924)     // at 9 hours, 204 parts or later...//
                 && !isHebrewLeapYear(year))    // ...of a common year,//
-                || (((conjunctionDay % 7) == 1)     // ...or is on a Monday at...//
+            || (((conjunctionDay % 7) == 1)     // ...or is on a Monday at...//
                 && (conjunctionParts >= 16789) // 15 hours, 589 parts or later...//
                 && (isHebrewLeapYear(year - 1))))// at the end of a leap year//
             // Then postpone Rosh HaShanah one day//
@@ -178,8 +264,8 @@ public class HebrewDate implements Comparable, Cloneable {
         else
             alternativeDay = conjunctionDay;
         if (((alternativeDay % 7) == 0)// If Rosh HaShanah would occur on Sunday,//
-                || ((alternativeDay % 7) == 3)     // or Wednesday,//
-                || ((alternativeDay % 7) == 5))     // or Friday//
+            || ((alternativeDay % 7) == 3)     // or Wednesday,//
+            || ((alternativeDay % 7) == 5))     // or Friday//
             // Then postpone it one (more) day//
             return (1 + alternativeDay);
         else
@@ -205,19 +291,18 @@ public class HebrewDate implements Comparable, Cloneable {
         return (getDaysInHebrewYear() % 10) == 3;
     }
 
-
     /**
      * Returns last day of a hebrew month.
      */
     public int getLastDayOfHebrewMonth(int month) {
         if ((month == 2)
-                || (month == 4)
-                || (month == 6)
-                || ((month == 8) && !(isCheshvanLong()))
-                || ((month == 9) && isKislevShort())
-                || (month == 10)
-                || ((month == 12) && !(isHebrewLeapYear()))
-                || (month == 13))
+            || (month == 4)
+            || (month == 6)
+            || ((month == 8) && !(isCheshvanLong()))
+            || ((month == 9) && isKislevShort())
+            || (month == 10)
+            || ((month == 12) && !(isHebrewLeapYear()))
+            || (month == 13))
             return 29;
         else
             return 30;
@@ -251,7 +336,6 @@ public class HebrewDate implements Comparable, Cloneable {
         hebrewDate = absDate - hebrewDateToAbsDate(hebrewMonth, 1, hebrewYear) + 1;
     }
 
-
     // ND+ER //
     // Computes the absolute date of Hebrew date. Default is current hebrew date. //
     private int hebrewDateToAbsDate(int month, int date, int year) {
@@ -276,56 +360,6 @@ public class HebrewDate implements Comparable, Cloneable {
         return (date +
                 getHebrewCalendarElapsedDays(year) // Days in prior years.//
                 + HEBREW_EPOCH);        // Days elapsed before absolute date 1.//
-    }
-
-
-    /**
-     * Inits date based on gregorian date (month, day, year)
-     */
-    public HebrewDate(int month, int date, int year) throws HebrewDateException {
-        // put in nicer message in exception
-        if (month == CURRENT_MONTH || date == CURRENT_DATE || year == CURRENT_YEAR)
-            throw new HebrewDateException("Illegal value in constructor.");
-        setDate(month, date, year);
-    }
-
-    /**
-     * Initializes a date based on the current system date.
-     */
-    public HebrewDate() {
-        resetDate();
-    }
-
-    /**
-     * Initializes a date based on java.util.Date object.
-     */
-    public HebrewDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        setDate(cal);
-    }
-
-    /**
-     * Initializes a date based on java.util.Calendar object.
-     */
-    public HebrewDate(Calendar cal) {
-        setDate(cal);
-    }
-
-    /**
-     * Sets the date based on a java.util.Calendar object. Modifies the hebrew date as well.
-     */
-    public void setDate(Calendar cal) {
-        this.month = cal.get(Calendar.MONTH) + 1;
-        this.date = cal.get(Calendar.DATE);
-        this.year = cal.get(Calendar.YEAR);
-
-        // init the hebrew date //
-        absDate = dateToAbsDate(month, date, year);
-        absDateToHebrewDate();
-
-        // set day of week //
-        day = Math.abs(absDate % 7) + 1;
     }
 
     /**
@@ -422,25 +456,17 @@ public class HebrewDate implements Comparable, Cloneable {
      * e.g. "Teves 23, 5760"
      */
     public String getHebrewDateAsHebString() {
-        StringBuilder date = new StringBuilder();
-        date.append(gimatria(hebrewDate)).append(' ')
-                .append(getHebrewMonthAsString())
-                .append(' ').append(gimatria(hebrewYear));
-        return date.toString();
+        return gimatria(hebrewDate) + ' ' +
+               getHebrewMonthAsString() +
+               ' ' + gimatria(hebrewYear);
     }
 
     public String getHebrewDateAsHebStringWithoutYear() {
-        StringBuilder date = new StringBuilder();
-        date.append(gimatria(hebrewDate)).append(" �")
-                .append(getHebrewMonthAsString());
-        return date.toString();
+        return gimatria(hebrewDate) + " ב" + getHebrewMonthAsString();
     }
 
     public String getHebrewDateAsHebStringWithoutYear2() {
-        StringBuilder date = new StringBuilder();
-        date.append(gimatria(hebrewDate)).append(' ')
-                .append(getHebrewMonthAsString());
-        return date.toString();
+        return gimatria(hebrewDate) + ' ' + getHebrewMonthAsString();
     }
 
 
@@ -568,7 +594,7 @@ public class HebrewDate implements Comparable, Cloneable {
     @Override
     public boolean equals(Object object) {
         HebrewDate hebDate = (HebrewDate) object;
-        return absDate == hebDate.getAbsDate();
+        return absDate == hebDate.absDate;
     }
 
     /**
@@ -579,29 +605,23 @@ public class HebrewDate implements Comparable, Cloneable {
      */
     public int compareTo(Object o) {
         HebrewDate hebDate = (HebrewDate) o;
-        if (absDate < hebDate.getAbsDate())
-            return -1;
-        else if (absDate > hebDate.getAbsDate())
-            return 1;
-        else
-            return 0;
+        return Integer.compare(absDate, hebDate.absDate);
     }
 
-
     /**
-     * returns a string  of the current hebrew month
+     * returns a string of the current hebrew month
      */
     public String getHebrewMonthAsString() {
 
         // if it is a leap year and 12th month //
         if (isHebrewLeapYear() && hebrewMonth == 12)
-            return "��� �'";
+            return "אדר א'";
         else
             return hebrewMonths[hebrewMonth - 1];
     }
 
     /**
-     * returns a string  of the current month
+     * returns a string of the current month
      */
     public String getMonthAsString() {
         return months[month - 1];
@@ -615,48 +635,6 @@ public class HebrewDate implements Comparable, Cloneable {
     }
 
     /**
-     * Returns the date within the month.
-     */
-    public int getDate() {
-        return date;
-    }
-
-    /**
-     * Returns the year.
-     */
-    public int getYear() {
-        return year;
-    }
-
-    /**
-     * Returns the hebrew month (1-12 or 13).
-     */
-    public int getHebrewMonth() {
-        return hebrewMonth;
-    }
-
-    /**
-     * Returns the hebrew date of the month.
-     */
-    public int getHebrewDate() {
-        return hebrewDate;
-    }
-
-    /**
-     * Returns the hebrew year.
-     */
-    public int getHebrewYear() {
-        return hebrewYear;
-    }
-
-    /**
-     * Returns the day of the week as a number between 1-7.
-     */
-    public int getDayOfWeek() {
-        return day;
-    }
-
-    /**
      * sets the month.
      */
     public void setMonth(int month) throws HebrewDateException {
@@ -664,10 +642,26 @@ public class HebrewDate implements Comparable, Cloneable {
     }
 
     /**
-     * sets the year.
+     * Returns the date within the month.
      */
-    public void setYear(int year) throws HebrewDateException {
-        setDate(CURRENT_MONTH, CURRENT_DATE, year);
+    public int getDate() {
+        return date;
+    }
+
+    /**
+     * Sets the date based on a java.util.Calendar object. Modifies the hebrew date as well.
+     */
+    public void setDate(Calendar cal) {
+        this.month = cal.get(Calendar.MONTH) + 1;
+        this.date = cal.get(Calendar.DATE);
+        this.year = cal.get(Calendar.YEAR);
+
+        // init the hebrew date //
+        absDate = dateToAbsDate(month, date, year);
+        absDateToHebrewDate();
+
+        // set day of week //
+        day = Math.abs(absDate % 7) + 1;
     }
 
     /**
@@ -678,10 +672,52 @@ public class HebrewDate implements Comparable, Cloneable {
     }
 
     /**
+     * Returns the year.
+     */
+    public int getYear() {
+        return year;
+    }
+
+    /**
+     * sets the year.
+     */
+    public void setYear(int year) throws HebrewDateException {
+        setDate(CURRENT_MONTH, CURRENT_DATE, year);
+    }
+
+    /**
+     * Returns the hebrew month (1-12 or 13).
+     */
+    public int getHebrewMonth() {
+        return hebrewMonth;
+    }
+
+    /**
      * sets the hebrew month.
      */
     public void setHebrewMonth(int month) throws HebrewDateException {
         setHebrewDate(month, CURRENT_DATE, CURRENT_YEAR);
+    }
+
+    /**
+     * Returns the hebrew date of the month.
+     */
+    public int getHebrewDate() {
+        return hebrewDate;
+    }
+
+    /**
+     * sets the hebrew date of month.
+     */
+    public void setHebrewDate(int date) throws HebrewDateException {
+        setHebrewDate(CURRENT_MONTH, date, CURRENT_YEAR);
+    }
+
+    /**
+     * Returns the hebrew year.
+     */
+    public int getHebrewYear() {
+        return hebrewYear;
     }
 
     /**
@@ -692,10 +728,10 @@ public class HebrewDate implements Comparable, Cloneable {
     }
 
     /**
-     * sets the hebrew date of month.
+     * Returns the day of the week as a number between 1-7.
      */
-    public void setHebrewDate(int date) throws HebrewDateException {
-        setHebrewDate(CURRENT_MONTH, date, CURRENT_YEAR);
+    public int getDayOfWeek() {
+        return day;
     }
 
     /**
@@ -709,52 +745,5 @@ public class HebrewDate implements Comparable, Cloneable {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static String gimatria(int n) {
-        StringBuilder gimatria = new StringBuilder();
-        if (n % 1000 == 0) {
-            gimatria.append(gimatria(n / 1000)).append("�����");
-            return gimatria.toString();
-        } else if (n > 1000) {
-            gimatria.append(gimatria(n / 1000)).append(gimatria(n % 1000));
-            return gimatria.toString();
-        }
-
-        StringBuilder p = new StringBuilder();
-        while (n >= 400) {
-            p.append("�");
-            n -= 400;
-        }
-
-        if (n >= 100) {
-            p.append("����".charAt(n / 100 - 1));
-            n %= 100;
-        }
-
-        if (n >= 10) {
-            if ((n == 15) || (n == 16)) {
-                n -= 9;
-            }
-
-            if (n / 10 > 0) {
-                p.append("���������".charAt(n / 10 - 1));
-            } else {
-                p.append('�');
-            }
-            n %= 10;
-        }
-
-        if (n > 0) {
-            p.append("���������".charAt(n - 1));
-        }
-
-        if (p.length() <= 1) {
-            p.append('\'');
-        } else {
-            p.insert(p.length() - 1, '"');
-        }
-
-        return p.toString();
     }
 }

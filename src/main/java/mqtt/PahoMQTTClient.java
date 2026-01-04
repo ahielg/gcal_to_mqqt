@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import util.CryptoUtil;
 import util.KeysCons;
 import util.MailSender;
 
@@ -12,42 +13,52 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Objects;
 import java.util.Properties;
+
+import static util.KeysCons.MQTT_PASS;
+import static util.KeysCons.MQTT_USER;
 
 
 /**
  * @author Ahielg
- * @date 29/05/2016
+ * Date 29/05/2016
  */
 public class PahoMQTTClient implements MQTTClient {
 
-    private MqttClient client;
+    private final MqttClient client;
     private boolean initialized = true;
 
     public PahoMQTTClient() {
         try {
             ConnectionDetails connectionDetails = loadConn();
+            System.out.println("Connecting to MQTT broker: " + connectionDetails.getUrl());
             client = new MqttClient(connectionDetails.getUrl(), "gcal", new MemoryPersistence());
             client.connect(getMqttConnectOptions(connectionDetails));
+            System.out.println("Connected successfully");
         } catch (MqttException e) {
+            System.err.println("Failed to connect to MQTT broker");
+            e.printStackTrace();
             sendMail(e);
             throw new RuntimeException("error while connecting");
         }
     }
 
     private static ConnectionDetails defaultConnection() {
-        return new ConnectionDetailsBuilder()
-                .setUrl("tcp://localhost:1883")
-                .setUsername(null)
-                .setPassword(null)
-                .build();
+        try {
+            return new ConnectionDetailsBuilder()
+                    .setUrl("tcp://192.168.5.55:1883")
+                    .setUsername(MQTT_USER)
+                    .setPassword(new CryptoUtil().decrypt(MQTT_PASS))
+                    .build();
+        } catch (Exception e) {
+            throw new RuntimeException("error while connecting", e);
+        }
     }
 
     private static void sendMail(Throwable throwable) {
         try {
 
-            MailSender.sendMail(KeysCons.PASSWORD, KeysCons.TO, "αςιδ ςν ςγλεπι ηβιν", getStackTrace(throwable));
+            MailSender.sendMail(KeysCons.PASSWORD, KeysCons.TO, "Χ©Χ’Χ™ΧΧ” Χ‘ΧΧ•Χ— Χ”ΧΆΧ‘Χ¨Χ™ Χ©ΧΧ™", getStackTrace(throwable));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,19 +90,22 @@ public class PahoMQTTClient implements MQTTClient {
                 inputStream = openFile(secondFile);
             }
 
-            Objects.requireNonNull(inputStream, "Configuration files not found.");
+            if (inputStream == null) {
+                System.out.println("Configuration files not found. Using default connection.");
+                return defaultConnection();
+            }
 
-            ///etc/openhab2
             Properties prop = new Properties();
             prop.load(inputStream);
+            inputStream.close();
 
             return new ConnectionDetailsBuilder()
-                    .setUrl(prop.getProperty("broker.url", "tcp://localhost:1883"))
-                    .setUsername(prop.getProperty("broker.user", null))
-                    .setPassword(prop.getProperty("broker.pwd", null))
+                    .setUrl(prop.getProperty("broker.url", "tcp://192.168.5.55:1883"))
+                    .setUsername(prop.getProperty("broker.user", MQTT_USER))
+                    .setPassword(prop.getProperty("broker.pwd", new CryptoUtil().decrypt(MQTT_PASS)))
                     .build();
         } catch (Exception e) {
-            System.out.println("Unknown error, Using default connection. Error: " + e.getMessage());
+            System.out.println("Error loading configuration, using default connection. Error: " + e.getMessage());
             return defaultConnection();
         }
     }
@@ -115,8 +129,13 @@ public class PahoMQTTClient implements MQTTClient {
             throw new IllegalStateException("MqttClient is closed");
         }
         try {
+            if (value == null) {
+                value = "";
+            }
+            System.out.println("Publishing to " + topic + ": " + value);
             client.publish(topic, new MqttMessage(value.getBytes()));
         } catch (MqttException e) {
+            System.err.println("Failed to publish to " + topic);
             e.printStackTrace();
             sendMail(e);
         }
@@ -126,7 +145,10 @@ public class PahoMQTTClient implements MQTTClient {
     public void close() {
         try {
             initialized = false;
-            client.disconnect();
+            System.out.println("Disconnecting from MQTT broker...");
+            client.disconnect(1000); // Wait up to 1 second for work to complete
+            client.close();
+            System.out.println("Disconnected.");
         } catch (MqttException e) {
             e.printStackTrace();
         }

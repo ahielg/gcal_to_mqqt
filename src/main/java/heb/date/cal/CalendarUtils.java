@@ -50,12 +50,12 @@ public class CalendarUtils {
     }
 
     public static String getJewishMonthName(int monthNumber, int year) {
-        String[] jewishMonthNamesLeap = {"πιρο", "ΰιιψ", "ριεεο", "ϊξεζ",
-                "ΰα", "ΰμεμ", "ϊωψι", "ηωεεο",
-                "λρμιε", "θαϊ", "ωαθ", "ΰγψ ΰ'", "ΰγψ α'"};
-        String[] jewishMonthNamesNonLeap = {"πιρο", "ΰιιψ", "ριεεο", "ϊξεζ",
-                "ΰα", "ΰμεμ", "ϊωψι", "ηωεεο",
-                "λρμιε", "θαϊ", "ωαθ", "ΰγψ"};
+        String[] jewishMonthNamesLeap = {"Χ Χ™Χ΅Χ", "ΧΧ™Χ™Χ¨", "Χ΅Χ™Χ•Χ•Χ", "ΧªΧΧ•Χ–",
+                "ΧΧ‘", "ΧΧΧ•Χ", "ΧªΧ©Χ¨Χ™", "Χ—Χ©Χ•Χ•Χ",
+                "Χ›Χ΅ΧΧ™Χ•", "ΧΧ‘Χª", "Χ©Χ‘Χ", "ΧΧ“Χ¨ Χ'", "ΧΧ“Χ¨ Χ‘'"};
+        String[] jewishMonthNamesNonLeap = {"Χ Χ™Χ΅Χ", "ΧΧ™Χ™Χ¨", "Χ΅Χ™Χ•Χ•Χ", "ΧªΧΧ•Χ–",
+                "ΧΧ‘", "ΧΧΧ•Χ", "ΧªΧ©Χ¨Χ™", "Χ—Χ©Χ•Χ•Χ",
+                "Χ›Χ΅ΧΧ™Χ•", "ΧΧ‘Χª", "Χ©Χ‘Χ", "ΧΧ“Χ¨"};
 
         if (hebrewLeapYear(year)) {
             return jewishMonthNamesLeap[monthNumber - 1];
@@ -78,7 +78,7 @@ public class CalendarUtils {
         int hebMonth = jewishDate.getMonth();
         int hebYear = jewishDate.getYear();
 
-        Set<String> listHolidays = new HashSet<String>(5);
+        Set<String> listHolidays = new HashSet<>(5);
 
         // Holidays in Nisan
 
@@ -86,49 +86,49 @@ public class CalendarUtils {
         while (getWeekdayOfHebrewDate(hagadolDay, 1, hebYear) != 6)
             hagadolDay -= 1;
         if (hebDay == hagadolDay && hebMonth == 1)
-            listHolidays.add("ωαϊ δβγεμ");
+            listHolidays.add("Χ©Χ‘Χª Χ”Χ’Χ“Χ•Χ");
 
         if (hebDay == 14 && hebMonth == 1)
-            listHolidays.add("ςψα τρη");
+            listHolidays.add("ΧΆΧ¨Χ‘ Χ¤Χ΅Χ—");
         if (hebDay == 15 && hebMonth == 1)
-            listHolidays.add("τρη");
+            listHolidays.add("Χ¤Χ΅Χ—");
         if (hebDay == 16 && hebMonth == 1) {
             if (diaspora) {
-                listHolidays.add("α' τρη");
+                listHolidays.add("Χ‘' Χ¤Χ΅Χ—");
             } else {
-                listHolidays.add("ηεμ δξεςγ");
+                listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
             }
         }
         if (hebDay == 17 && hebMonth == 1)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 18 && hebMonth == 1)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 19 && hebMonth == 1)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 20 && hebMonth == 1)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 21 && hebMonth == 1) {
             if (!diaspora)
-                listHolidays.add("ωαιςι ωμ τρη");
+                listHolidays.add("Χ©Χ‘Χ™ΧΆΧ™ Χ©Χ Χ¤Χ΅Χ—");
             else
-                listHolidays.add("ωαιςι ωμ τρη");
+                listHolidays.add("Χ©Χ‘Χ™ΧΆΧ™ Χ©Χ Χ¤Χ΅Χ—");
         }
         if (hebDay == 22 && hebMonth == 1) {
             if (diaspora)
-                listHolidays.add("ωξιπι ωμ τρη");
+                listHolidays.add("Χ©ΧΧ™Χ Χ™ Χ©Χ Χ¤Χ΅Χ—");
         }
 
         // Yom Hashoah
 
         if (getWeekdayOfHebrewDate(27, 1, hebYear) == 5) {
             if (hebDay == 26 && hebMonth == 1)
-                listHolidays.add("ιεν δωεΰδ");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ©Χ•ΧΧ”");
         } else if (hebYear >= 5757 && getWeekdayOfHebrewDate(27, 1, hebYear) == 0) {
             if (hebDay == 28 && hebMonth == 1)
-                listHolidays.add("ιεν δωεΰδ");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ©Χ•ΧΧ”");
         } else {
             if (hebDay == 27 && hebMonth == 1)
-                listHolidays.add("ιεν δωεΰδ");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ©Χ•ΧΧ”");
         }
 
         // Holidays in Iyar
@@ -137,39 +137,39 @@ public class CalendarUtils {
 
         if (getWeekdayOfHebrewDate(4, 2, hebYear) == 5) { // If 4th of Iyar is a Thursday ...
             if (hebDay == 2 && hebMonth == 2) // ... then Yom Hazicaron is on 2th of Iyar
-                listHolidays.add("ιεν δζιλψεο");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ–Χ™Χ›Χ¨Χ•Χ");
         } else if (getWeekdayOfHebrewDate(4, 2, hebYear) == 4) {
             if (hebDay == 3 && hebMonth == 2)
-                listHolidays.add("ιεν δζιλψεο");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ–Χ™Χ›Χ¨Χ•Χ");
         } else if (hebYear >= 5764 && getWeekdayOfHebrewDate(4, 2, hebYear) == 0) {
             if (hebDay == 5 && hebMonth == 2)
-                listHolidays.add("ιεν δζιλψεο");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ–Χ™Χ›Χ¨Χ•Χ");
         } else {
             if (hebDay == 4 && hebMonth == 2)
-                listHolidays.add("ιεν δζιλψεο");
+                listHolidays.add("Χ™Χ•Χ Χ”Χ–Χ™Χ›Χ¨Χ•Χ");
         }
 
         // Yom Ha'Azmaut
 
         if (getWeekdayOfHebrewDate(5, 2, hebYear) == 6) {
             if (hebDay == 3 && hebMonth == 2)
-                listHolidays.add("ιεν δςφξΰεϊ");
+                listHolidays.add("Χ™Χ•Χ Χ”ΧΆΧ¦ΧΧΧ•Χª");
         } else if (getWeekdayOfHebrewDate(5, 2, hebYear) == 5) {
             if (hebDay == 4 && hebMonth == 2)
-                listHolidays.add("ιεν δςφξΰεϊ");
+                listHolidays.add("Χ™Χ•Χ Χ”ΧΆΧ¦ΧΧΧ•Χª");
         } else if (hebYear >= 5764 && getWeekdayOfHebrewDate(4, 2, hebYear) == 0) {
             if (hebDay == 6 && hebMonth == 2)
-                listHolidays.add("ιεν δςφξΰεϊ");
+                listHolidays.add("Χ™Χ•Χ Χ”ΧΆΧ¦ΧΧΧ•Χª");
         } else {
             if (hebDay == 5 && hebMonth == 2)
-                listHolidays.add("ιεν δςφξΰεϊ");
+                listHolidays.add("Χ™Χ•Χ Χ”ΧΆΧ¦ΧΧΧ•Χª");
         }
         if (hebDay == 14 && hebMonth == 2)
-            listHolidays.add("τρη ωπι");
+            listHolidays.add("Χ¤Χ΅Χ— Χ©Χ Χ™");
         if (hebDay == 18 && hebMonth == 2)
-            listHolidays.add("μβ αςεξψ");
+            listHolidays.add("ΧΧ’ Χ‘ΧΆΧ•ΧΧ¨");
         if (hebDay == 28 && hebMonth == 2)
-            listHolidays.add("ιεν ιψεωμιν");
+            listHolidays.add("Χ™Χ•Χ Χ™Χ¨Χ•Χ©ΧΧ™Χ");
 
         // Holidays in Sivan
 
@@ -177,135 +177,135 @@ public class CalendarUtils {
             listHolidays.add("Erev Shavuot");
         if (hebDay == 6 && hebMonth == 3) {
             if (diaspora)
-                listHolidays.add("ωαεςεϊ ΰ'");
+                listHolidays.add("Χ©Χ‘Χ•ΧΆΧ•Χª Χ'");
             else
-                listHolidays.add("ωαεςεϊ");
+                listHolidays.add("Χ©Χ‘Χ•ΧΆΧ•Χª");
         }
         if (hebDay == 7 && hebMonth == 3) {
             if (diaspora)
-                listHolidays.add("α' ωαεςεϊ");
+                listHolidays.add("Χ‘' Χ©Χ‘Χ•ΧΆΧ•Χª");
         }
 
         // Holidays in Tammuz
 
         if (getWeekdayOfHebrewDate(17, 4, hebYear) == 6) {
             if (hebDay == 18 && hebMonth == 4)
-                listHolidays.add("ι''ζ αϊξεζ");
+                listHolidays.add("Χ™''Χ– Χ‘ΧªΧΧ•Χ–");
         } else {
             if (hebDay == 17 && hebMonth == 4)
-                listHolidays.add("ι''ζ αϊξεζ");
+                listHolidays.add("Χ™''Χ– Χ‘ΧªΧΧ•Χ–");
         }
 
         // Holidays in Av
 
         if (getWeekdayOfHebrewDate(9, 5, hebYear) == 6) {
             if (hebDay == 10 && hebMonth == 5)
-                listHolidays.add("ϊωςδ αΰα (πγηδ)");
+                listHolidays.add("ΧªΧ©ΧΆΧ” Χ‘ΧΧ‘ (Χ Χ“Χ—Χ”)");
         } else {
             if (hebDay == 9 && hebMonth == 5)
-                listHolidays.add("ϊωςδ αΰα");
+                listHolidays.add("ΧªΧ©ΧΆΧ” Χ‘ΧΧ‘");
         }
         if (hebDay == 15 && hebMonth == 5)
-            listHolidays.add("θ''ε αΰα");
+            listHolidays.add("Χ''Χ• Χ‘ΧΧ‘");
 
         // Holidays in Elul
 
         if (hebDay == 29 && hebMonth == 6)
-            listHolidays.add("ςψα ψΰω δωπδ");
+            listHolidays.add("ΧΆΧ¨Χ‘ Χ¨ΧΧ© Χ”Χ©Χ Χ”");
 
         // Holidays in Tishri
 
         if (hebDay == 1 && hebMonth == 7)
-            listHolidays.add("ΰ' ψΰω δωπδ");
+            listHolidays.add("Χ' Χ¨ΧΧ© Χ”Χ©Χ Χ”");
         if (hebDay == 2 && hebMonth == 7)
-            listHolidays.add("α' ψΰω δωπδ");
+            listHolidays.add("Χ‘' Χ¨ΧΧ© Χ”Χ©Χ Χ”");
         if (getWeekdayOfHebrewDate(3, 7, hebYear) == 6) {
             if (hebDay == 4 && hebMonth == 7)
-                listHolidays.add("φεν βγμδ (πγηδ)");
+                listHolidays.add("Χ¦Χ•Χ Χ’Χ“ΧΧ” (Χ Χ“Χ—Χ”)");
         } else {
             if (hebDay == 3 && hebMonth == 7)
-                listHolidays.add("φεν βγμιδ");
+                listHolidays.add("Χ¦Χ•Χ Χ’Χ“ΧΧ™Χ”");
         }
         if (hebDay == 9 && hebMonth == 7)
-            listHolidays.add("ςψα ιεν λιτεψ");
+            listHolidays.add("ΧΆΧ¨Χ‘ Χ™Χ•Χ Χ›Χ™Χ¤Χ•Χ¨");
         if (hebDay == 10 && hebMonth == 7)
-            listHolidays.add("ιεν λιτεψ");
+            listHolidays.add("Χ™Χ•Χ Χ›Χ™Χ¤Χ•Χ¨");
         if (hebDay == 14 && hebMonth == 7)
-            listHolidays.add("ςψα ρελεϊ");
+            listHolidays.add("ΧΆΧ¨Χ‘ Χ΅Χ•Χ›Χ•Χª");
         if (hebDay == 15 && hebMonth == 7) {
             if (diaspora)
-                listHolidays.add("ΰ' ρελεϊ");
+                listHolidays.add("Χ' Χ΅Χ•Χ›Χ•Χª");
             else
-                listHolidays.add("ρελεϊ");
+                listHolidays.add("Χ΅Χ•Χ›Χ•Χª");
         }
         if (hebDay == 16 && hebMonth == 7) {
             if (diaspora)
-                listHolidays.add("α' ρελεϊ");
+                listHolidays.add("Χ‘' Χ΅Χ•Χ›Χ•Χª");
             else
-                listHolidays.add("ηεμ δξεςγ");
+                listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         }
         if (hebDay == 17 && hebMonth == 7)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 18 && hebMonth == 7)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 19 && hebMonth == 7)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 20 && hebMonth == 7)
-            listHolidays.add("ηεμ δξεςγ");
+            listHolidays.add("Χ—Χ•Χ Χ”ΧΧ•ΧΆΧ“");
         if (hebDay == 21 && hebMonth == 7)
-            listHolidays.add("δεωςπδ ψαδ");
+            listHolidays.add("Χ”Χ•Χ©ΧΆΧ Χ” Χ¨Χ‘Χ”");
         if (hebDay == 22 && hebMonth == 7) {
             if (!diaspora) {
-                listHolidays.add("ωξιπι ςφψϊ");
-                listHolidays.add("ωξηϊ ϊεψδ");
+                listHolidays.add("Χ©ΧΧ™Χ Χ™ ΧΆΧ¦Χ¨Χª");
+                listHolidays.add("Χ©ΧΧ—Χª ΧªΧ•Χ¨Χ”");
             } else {
-                listHolidays.add("ωξιπι ςφψϊ");
+                listHolidays.add("Χ©ΧΧ™Χ Χ™ ΧΆΧ¦Χ¨Χª");
             }
         }
         if (hebDay == 23 && hebMonth == 7) {
             if (diaspora)
-                listHolidays.add("ωξηϊ ϊεψδ");
+                listHolidays.add("Χ©ΧΧ—Χª ΧªΧ•Χ¨Χ”");
         }
 
         // Holidays in Kislev
 
         if (hebDay == 25 && hebMonth == 9)
-            listHolidays.add("ΰ' ηπελδ");
+            listHolidays.add("Χ' Χ—Χ Χ•Χ›Χ”");
         if (hebDay == 26 && hebMonth == 9)
-            listHolidays.add("α' ηπελδ");
+            listHolidays.add("Χ‘' Χ—Χ Χ•Χ›Χ”");
         if (hebDay == 27 && hebMonth == 9)
-            listHolidays.add("β' ηπελδ");
+            listHolidays.add("Χ’' Χ—Χ Χ•Χ›Χ”");
         if (hebDay == 28 && hebMonth == 9)
-            listHolidays.add("γ' ηπελδ");
+            listHolidays.add("Χ“' Χ—Χ Χ•Χ›Χ”");
         if (hebDay == 29 && hebMonth == 9)
-            listHolidays.add("δ' ηπελδ");
+            listHolidays.add("Χ”' Χ—Χ Χ•Χ›Χ”");
 
         // Holidays in Tevet
 
         if (hebDay == 10 && hebMonth == 10)
-            listHolidays.add("ςωψδ αθαϊ");
+            listHolidays.add("ΧΆΧ©Χ¨Χ” Χ‘ΧΧ‘Χª");
 
         if (calendar.getLastDayOfJewishMonth(9, hebYear) == 30) {
             if (hebDay == 30 && hebMonth == 9)
-                listHolidays.add("ε' ηπελδ");
+                listHolidays.add("Χ•' Χ—Χ Χ•Χ›Χ”");
             if (hebDay == 1 && hebMonth == 10)
-                listHolidays.add("ζ' ηπελδ");
+                listHolidays.add("Χ–' Χ—Χ Χ•Χ›Χ”");
             if (hebDay == 2 && hebMonth == 10)
-                listHolidays.add("εζΰϊ ηπελδ");
+                listHolidays.add("Χ•Χ–ΧΧª Χ—Χ Χ•Χ›Χ”");
         }
         if (calendar.getLastDayOfJewishMonth(9, hebYear) == 29) {
             if (hebDay == 1 && hebMonth == 10)
-                listHolidays.add("ε' ηπελδ");
+                listHolidays.add("Χ•' Χ—Χ Χ•Χ›Χ”");
             if (hebDay == 2 && hebMonth == 10)
-                listHolidays.add("ζ' ηπελδ");
+                listHolidays.add("Χ–' Χ—Χ Χ•Χ›Χ”");
             if (hebDay == 3 && hebMonth == 10)
-                listHolidays.add("εζΰϊ ηπελδ");
+                listHolidays.add("Χ•Χ–ΧΧª Χ—Χ Χ•Χ›Χ”");
         }
 
         // Holidays in Shevat
 
         if (hebDay == 15 && hebMonth == 11)
-            listHolidays.add("θ''ε αωαθ");
+            listHolidays.add("Χ''Χ• Χ‘Χ©Χ‘Χ");
 
         // Holidays in Adar (I)/Adar II
 
@@ -317,22 +317,22 @@ public class CalendarUtils {
 
         if (getWeekdayOfHebrewDate(13, monthEsther, hebYear) == 6) {
             if (hebDay == 11 && hebMonth == monthEsther)
-                listHolidays.add("ϊςπιϊ ΰρϊψ (πγηδ)");
+                listHolidays.add("ΧªΧΆΧ Χ™Χª ΧΧ΅ΧªΧ¨ (Χ Χ“Χ—Χ”)");
         } else {
             if (hebDay == 13 && hebMonth == monthEsther)
-                listHolidays.add("ϊςπιϊ ΰρϊψ");
+                listHolidays.add("ΧªΧΆΧ Χ™Χª ΧΧ΅ΧªΧ¨");
         }
 
         if (hebDay == 14 && hebMonth == monthEsther)
-            listHolidays.add("τεψιν");
+            listHolidays.add("Χ¤Χ•Χ¨Χ™Χ");
         if (hebDay == 15 && hebMonth == monthEsther)
-            listHolidays.add("ωεωο τεψιν");
+            listHolidays.add("Χ©Χ•Χ©Χ Χ¤Χ•Χ¨Χ™Χ");
 
         if (calendar.hebrewLeapYear(hebYear)) {
             if (hebDay == 14 && hebMonth == 12)
-                listHolidays.add("τεψιν χθο");
+                listHolidays.add("Χ¤Χ•Χ¨Χ™Χ Χ§ΧΧ");
             if (hebDay == 15 && hebMonth == 12)
-                listHolidays.add("ωεωο τεψιν χθο");
+                listHolidays.add("Χ©Χ•Χ©Χ Χ¤Χ•Χ¨Χ™Χ Χ§ΧΧ");
         }
         return listHolidays;
     }
@@ -340,7 +340,7 @@ public class CalendarUtils {
     public static String gimatria(int n) {
         StringBuilder gimatria = new StringBuilder(50);
         if (n % 1000 == 0) {
-            gimatria.append(gimatria(n / 1000)).append("ΰμτιν");
+            gimatria.append(gimatria(n / 1000)).append("ΧΧΧ¤Χ™Χ");
             return gimatria.toString();
         } else if (n > 1000) {
             gimatria.append(gimatria(n / 1000)).append(gimatria(n % 1000));
@@ -349,12 +349,12 @@ public class CalendarUtils {
 
         StringBuilder p = new StringBuilder(50);
         while (n >= 400) {
-            p.append('ϊ');
+            p.append('Χª');
             n -= 400;
         }
 
         if (n >= 100) {
-            p.append("χψωϊ".charAt(n / 100 - 1));
+            p.append("Χ§Χ¨Χ©Χª".charAt(n / 100 - 1));
             n %= 100;
         }
 
@@ -364,15 +364,15 @@ public class CalendarUtils {
             }
 
             if (n / 10 > 0) {
-                p.append("ιλμξπρςτφ".charAt(n / 10 - 1));
+                p.append("Χ™Χ›ΧΧΧ Χ΅ΧΆΧ¤Χ¦".charAt(n / 10 - 1));
             } else {
-                p.append('θ');
+                p.append('Χ');
             }
             n %= 10;
         }
 
         if (n > 0) {
-            p.append("ΰαβγδεζηθ".charAt(n - 1));
+            p.append("ΧΧ‘Χ’Χ“Χ”Χ•Χ–Χ—Χ".charAt(n - 1));
         }
 
         if (p.length() <= 1) {
