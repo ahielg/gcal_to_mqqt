@@ -46,7 +46,7 @@ public class PahoMQTTClient implements MQTTClient {
     private static ConnectionDetails defaultConnection() {
         try {
             return new ConnectionDetailsBuilder()
-                    .setUrl("tcp://192.168.5.55:1883")
+                    .setUrl("tcp://localhost:1883")
                     .setUsername(MQTT_USER)
                     .setPassword(new CryptoUtil().decrypt(MQTT_PASS))
                     .build();
@@ -100,7 +100,7 @@ public class PahoMQTTClient implements MQTTClient {
             inputStream.close();
 
             return new ConnectionDetailsBuilder()
-                    .setUrl(prop.getProperty("broker.url", "tcp://192.168.5.55:1883"))
+                    .setUrl(prop.getProperty("broker.url", "tcp://localhost:1883"))
                     .setUsername(prop.getProperty("broker.user", MQTT_USER))
                     .setPassword(prop.getProperty("broker.pwd", new CryptoUtil().decrypt(MQTT_PASS)))
                     .build();
